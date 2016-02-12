@@ -1,0 +1,16 @@
+{
+  "name": "Round",
+  "description": "Analyse and provide feedback on news consumption",
+  "version": "1.0",
+  "manifest_version": 2,
+  "content_scripts": [
+      {
+        "matches": ["http://*/*", "https://*/*"],
+        "js": ["jquery-min.js", "confirm.js"]
+      }
+    ],
+  "background": {
+    "scripts": ["background/analytics.js"]
+  },
+  "permissions": [ "history", "http://*/*", "https://*/*" ],
+}
