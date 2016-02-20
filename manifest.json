@@ -3,14 +3,14 @@
   "description": "Analyse and provide feedback on news consumption",
   "version": "1.0",
   "manifest_version": 2,
-  "content_scripts": [
-      {
-        "matches": ["http://*/*", "https://*/*"],
-        "js": ["jquery-min.js", "confirm.js"]
-      }
-    ],
+  // "content_scripts": [
+  //     {
+  //       "matches": ["http://*/*", "https://*/*"],
+  //       "js": ["jquery-min.js"]
+  //     }
+  //   ],
   "background": {
-    "scripts": ["background/analytics.js"]
+    "scripts": ["/background/analytics.js"]
   },
-  "permissions": [ "history", "http://*/*", "https://*/*" ],
+  "permissions": [ "history", "tabs", "http://*/*", "https://*/*" ]
 }
