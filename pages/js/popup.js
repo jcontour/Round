@@ -7,7 +7,7 @@ function articleHandler(e) {
 
 function profileHandler(e) {
     chrome.runtime.sendMessage({directive: "profile-click"}, function(response) {
-        // this.close(); // close the popup when the background finishes processing request
+        this.close(); // close the popup when the background finishes processing request
     });
 }
 

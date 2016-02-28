@@ -12,10 +12,10 @@ chrome.runtime.onMessage.addListener(
             })
 
             // execute the content script
-            chrome.tabs.executeScript(null, { // defaults to the current tab
-                file: "contentscript.js", // script to inject into page and run in sandbox
-                // allFrames: true // This injects script into iframes in the page and doesn't work before 4.0.266.0.
-            });
+            // chrome.tabs.executeScript(null, { // defaults to the current tab
+            //     file: "contentscript.js", // script to inject into page and run in sandbox
+            //     // allFrames: true // This injects script into iframes in the page and doesn't work before 4.0.266.0.
+            // });
 
             console.log("article button clicked");
             value ++;

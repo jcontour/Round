@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    	<title>Round</title>
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    	<link href="css/profile.css" rel="stylesheet" type="text/css">
+    	<script type="text/javascript" src="../lib/jquery-min.js"></script>
+    	<script type="text/javascript" src="../lib/d3.min.js"></script>
+    	<script type="text/javascript" src="js/profile.js"></script>
+	</head>
+	<body>
+		<header>
+			<img id="logo" src="img/round_logo.png">
+			<img id="close" src="img/close.png">
+
+			<div id="button-wrapper">
+				<div id="time-week" class="time-button bold active">THIS WEEK</div>
+				<div id="time-all" class="time-button bold">ALL TIME</div>
+			</div>
+		</header>
+
+		<section id="numbers">
+			<h1 class="rotate bold">THE NUMBERS</h1>
+			<div id="read-total"> </div>
+			<div id="read-this-week"> </div>
+			<div id="read-graph"> </div>
+		</section>
+
+		<section id="habits">
+			<h1 class="rotate bold">HABITS</h1>
+			<div id="trait-graph"> </div>
+			<div id="word-count"> </div>
+			<div id="min-per-article"> </div>
+		</section>
+
+		<section id="topics">
+			<h1 class="rotate bold">TOPIC BREAKDOWN</h1>
+			<div id="umbrella-pie-chart"> </div>
+			<div id="read-unread-graph"> </div>
+			<div id="caught-up"> </div>
+		</section>
+
+		<footer>
+			<h1 class="bold">COMPARED TO YOU</h1>
+			<div id="factoid1" class="factoid"> </div>
+			<div id="factoid2" class="factoid"> </div>
+			<div id="factoid3" class="factoid"> </div>
+		</footer>
+
+	</body>
+</html>
