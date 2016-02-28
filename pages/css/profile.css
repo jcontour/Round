@@ -50,8 +50,8 @@ h1 {
 }
 
 section {
-	padding: 15px;
-	margin-bottom: 20px;
+	padding: 20px;
+	margin-bottom: 15px;
 }
 
 section div {
@@ -66,12 +66,13 @@ section div {
 	transform: rotate(-90deg);
 	transform-origin: left top 0;
 	position: relative;
+	left: -3px;
 }
 
 #numbers {
 	color: #FEDA39;
-	width: calc(55% - 40px);
-	height: 150px;
+	width: 560px;
+	height: 135px;
 	background-color: #231F20;
 	border-top: 2px solid #FEDA39;
 	border-bottom: 2px solid #FEDA39;
@@ -80,29 +81,29 @@ section div {
 }
 
 #numbers h1 {
-	top: 125px
+	top: 115px
 }
 
 #read-total {  
 	display: inline-block;
-	width: 25%;
-	height: 150px;
+	width: 135px;
+	height: 135px;
 }
 #read-this-week { 
 	display: inline-block;
-	width: 25%;
-	height: 150px;
+	width: 135px;
+	height: 135px;
 }
 #read-graph {  
 	display: inline-block;
-	width: 40%;
-	height: 150px;
+	width: 240px;
+	height: 135px;
 }
 
 #habits {
 	color: #009FC5;
-	width: calc(45% - 40px);
-	height: 150px;
+	width: 450px;
+	height: 135px;
 	background-color: #231F20;
 	border-top: 2px solid #009FC5;
 	border-bottom: 2px solid #009FC5;
@@ -111,29 +112,29 @@ section div {
 }
 
 #habits h1 {
-	top: 90px;
+	top: 88px;
 }
 
 #trait-graph { 
 	display: inline-block;
-	width: 30%;
-	height: 150px; 
+	width: 160px;
+	height: 135px; 
 }
 #word-count {  
 	display: inline-block;
-	width: 29%;
-	height: 150px;
+	width: 125px;
+	height: 135px;
 }
 #min-per-article {  
 	display: inline-block;
-	width: 29%;
-	height: 150px;
+	width: 112px;
+	height: 135px;
 }
 
 #topics {
 	color: #00C189;
-	width: calc(100% - 30px);
-	height: 175px;
+	width: calc(100% - 40px);
+	height: 165px;
 	background-color: #231F20;
 	border-top: 2px solid #00C189;
 	border-bottom: 2px solid #00C189;
@@ -142,30 +143,30 @@ section div {
 }
 
 #topics h1 {
-	top: 155px;
+	top: 150px;
 }
 
 #umbrella-pie-chart {  
 	display: inline-block;
-	height: 175px;
-	width: 30%;
+	height: 160px;
+	width: 245px;
 }
 #read-unread-graph {  
 	display: inline-block;
-	height: 175px;
-	width: 40%;
+	height: 160px;
+	width: 485px;
 }
 #caught-up {  
 	display: inline-block;
-	height: 175px;
-	width: 25%;
+	height: 160px;
+	width: 280px;
 }
 
 footer {
 	color: #E3594B;
-	width: calc(100% - 30px);
-	height: 50px;
-	padding: 5px 15px;
+	width: calc(100% - 40px);
+	height: 40px;
+	padding: 5px 20px;
 	background-color: #231F20;
 	border-top: 2px solid #E3594B;
 	border-bottom: 2px solid #E3594B;
@@ -174,6 +175,7 @@ footer {
 footer h1 {
 	display: inline-block;
 	width: 100px;
+	margin: 5px 0 0 0;
 }
 
 /*dark grey #231F20 */

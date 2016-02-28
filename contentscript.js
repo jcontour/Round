@@ -21,9 +21,9 @@ buildProfile = function(){
 	$("#profile-wrapper").css({
 		"position": "absolute", 
 		"top": "100px", 
-		"left": "calc(50% - 520px)", 
-		"width": "1040px", 
-		"height": "581px", 
+		"left": "calc(50% - 550px)", 
+		"width": "1100px", 
+		"height": "626px", 
 		"padding": "10px"
 	});
 
@@ -32,10 +32,6 @@ buildProfile = function(){
 		"height": "100%",
 		"border": "none"
 	})
-
-	// $("#close").css({
-
-	// })
 
 	disableScroll();
 
