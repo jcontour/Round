@@ -148,9 +148,18 @@ section div {
 
 #umbrella-pie-chart {  
 	display: inline-block;
-	height: 160px;
-	width: 245px;
+	height: 140px;
+	width: 225px;
+	position: relative;
+	top: -40px;
+	padding: 10px;
 }
+
+#umbrella-pie-chart svg {
+	float: right;
+}
+
+
 #read-unread-graph {  
 	display: inline-block;
 	height: 160px;

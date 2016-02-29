@@ -1,6 +1,6 @@
 function articleHandler(e) {
     chrome.runtime.sendMessage({directive: "article-click"}, function(response) {
-    	$("body").append("<p>" + response.value + "</p>");
+    	// $("body").append("<p>" + response.value + "</p>");
         // this.close(); // close the popup when the background finishes processing request
     });
 }

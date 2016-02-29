@@ -18,7 +18,7 @@
     "js": "pages/js/popup.js"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["/lib/jquery-min.js", "background.js"]
   },
   "permissions": [ "history", "tabs", "storage", "http://*/*", "https://*/*" ]
 }
