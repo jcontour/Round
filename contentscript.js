@@ -1,12 +1,10 @@
-var source  = chrome.extension.getURL ("/pages/profile.html");
-// var closesource = chrome.extension.getURL ("/pages/img/close.png");
-
 disableScroll = function(){ $('body').css('overflow', 'hidden'); };
 enableScroll = function(){ $('body').css('overflow','scroll'); };
 
-buildProfile = function(){
+overlay = function(){
+	console.log("building profile");
 
-	$("body").prepend("<div id='overlay'> <div id='profile-wrapper'> <iframe id='iframe-content' src=" + source + "> </iframe> </div> </div>");
+	$("body").prepend("<div id='overlay'> </div>");
 	
 	$("#overlay").css({
 		"position": "absolute", 
@@ -15,36 +13,20 @@ buildProfile = function(){
 		"width": "100%", 
 		"height": "100%", 
 		"background-color": "rgba(0,0,0,.8)", 
-		"z-index": "10000"
+		"z-index": "10000",
+		"display": "none"
 	});
 
-	$("#profile-wrapper").css({
-		"position": "absolute", 
-		"top": "100px", 
-		"left": "calc(50% - 550px)", 
-		"width": "1100px", 
-		"height": "626px", 
-		"padding": "10px"
-	});
-
-	$("#iframe-content").css({
-		"width": "100%",
-		"height": "100%",
-		"border": "none"
-	})
+	$('#overlay').fadeIn("fast");
 
 	disableScroll();
 
 }
 
-buildProfile();
+overlay();
+console.log("made overlay");
 
 $("#overlay").click(function(){
-	$("#overlay").remove()
-	enableScroll();
-});
-
-$("#close").click(function(){
 	$("#overlay").remove()
 	enableScroll();
 });

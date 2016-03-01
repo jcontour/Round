@@ -1,11 +1,12 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:900,300);
 
 html body {
-	width: 100%;
-	height: 100%;
+	width: 800px;
+	height: 600px;
 	font-family: "Roboto";
 	margin: 0;
 	padding: 0;
+	background-color: #231F20;
 }
 
 .bold { font-weight: 900; letter-spacing: 2px; }
@@ -27,7 +28,7 @@ h1 {
 
 #close {
 	position: absolute;
-	right: 15px;
+	right: 10px;
 }
 
 .time-button {
@@ -42,7 +43,7 @@ h1 {
 #button-wrapper {
 	display: inline-block;
 	position: absolute;
-	right: 70px;
+	right: 15px;
 }
 
 .active {
@@ -186,11 +187,3 @@ footer h1 {
 	width: 100px;
 	margin: 5px 0 0 0;
 }
-
-/*dark grey #231F20 */
-/*med grey #4D4446 */
-/*light grey #807174 */
-/*pink #E3594B */
-/*yellow #FEDA39 */
-/*mint #00C189 */
-/*blue #009FC5 */

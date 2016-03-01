@@ -1,11 +1,28 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Round</title>
-    <script src="../lib/jquery-min.js"></script>
-	<script src="js/popup.js"></script>
-</head>
+	<head>
+    	<title>Round</title>
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    	<link href="css/popup.css" rel="stylesheet" type="text/css">
+    	<script type="text/javascript" src="../lib/jquery-min.js"></script>
+    	<script type="text/javascript" src="../lib/d3.min.js"></script>
+    	<script type="text/javascript" src="js/popup.js"></script>
+	</head>
 	<body>
-		<button id="profile">User profile</button>
+		<header>
+			<img id="logo" src="img/round_logo.png">
+
+			<div id="button-wrapper">
+				<div id="toggle-overview" class="toggle-button bold">OVERVIEW</div>
+				<div id="toggle-profile" class="toggle-button bold">PROFILE</div>
+			</div>
+		</header>
+
+		<div id="overview" class="section active">
+		</div>
+
+		<div id="profile" class="section inactive">
+		</div>
+
 	</body>
 </html>

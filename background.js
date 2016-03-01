@@ -1,4 +1,5 @@
-var value = 0;
+var articles = [];
+
 
 //when url changes
 chrome.tabs.onUpdated.addListener(function(info) {
@@ -6,7 +7,10 @@ chrome.tabs.onUpdated.addListener(function(info) {
     chrome.tabs.query({active: true}, function(tab){
         // parse url
         url = tab[0].url;
+        // console.log(url);
+
         var a = $('<a>', { href:url } )[0];
+
         // are we on nytimes
         if (a.hostname == "www.nytimes.com"){
             var path = a.pathname;
@@ -15,7 +19,9 @@ chrome.tabs.onUpdated.addListener(function(info) {
 
             // checking if first value in array is a four digit number (specific to how nytimes formats article urls)
             if ( !isNaN(splitpath[0]) && splitpath[0].length == 4) {
+
                 console.log(a.pathname);
+                articles.push(a.pathname);
             }
         }
     })
@@ -24,16 +30,18 @@ chrome.tabs.onUpdated.addListener(function(info) {
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         switch (request.directive) {
-        case "profile-click":
-            // execute the content script
-            chrome.tabs.executeScript(null, { // defaults to the current tab
-                file: "contentscript.js", // script to inject into page and run in sandbox
-            });
-            sendResponse({}); // sending back response to sender
-            break;
+            case "open":
+                console.log("pop-up opened");
+                // execute the content script
+                // chrome.tabs.executeScript(null, { // defaults to the current tab
+                //     file: "contentscript.js", // script to inject into page and run in sandbox
+                // });
+                sendResponse(articles); // sending back response to sender
+                break;
 
         default:
             // helps debug when request directive doesn't match
+            // console.log(request, sender);
             alert("Unmatched request of '" + request + "' from script to background.js from " + sender);
         }
     }
