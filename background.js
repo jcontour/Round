@@ -1,16 +1,12 @@
 var articles = [];
 
-
 //when url changes
 chrome.tabs.onUpdated.addListener(function(info) {
     // check what url is
     chrome.tabs.query({active: true}, function(tab){
         // parse url
         url = tab[0].url;
-        // console.log(url);
-
         var a = $('<a>', { href:url } )[0];
-
         // are we on nytimes
         if (a.hostname == "www.nytimes.com"){
             var path = a.pathname;
@@ -27,6 +23,7 @@ chrome.tabs.onUpdated.addListener(function(info) {
     })
 });
 
+// listen for messages
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         switch (request.directive) {
@@ -40,8 +37,7 @@ chrome.runtime.onMessage.addListener(
                 break;
 
         default:
-            // helps debug when request directive doesn't match
-            // console.log(request, sender);
+            // for debugging
             alert("Unmatched request of '" + request + "' from script to background.js from " + sender);
         }
     }

@@ -3,36 +3,35 @@ function switchToOverview(){
 	if ($('#profile').hasClass("active")){
 		$('#overview').removeClass('inactive').addClass('active');
 		$('#profile').removeClass('active').addClass('inactive');
+    $('#toggle-overview').removeClass('off').addClass('on');
+    $('#toggle-profile').removeClass('on').addClass('off');
 	}
 }
-
 function switchToProfile(){
 	console.log("show profile");
 	if ($('#overview').hasClass("active")){
 		$('#profile').removeClass('inactive').addClass('active');
 		$('#overview').removeClass('active').addClass('inactive');
+    $('#toggle-profile').removeClass('off').addClass('on');
+    $('#toggle-overview').removeClass('on').addClass('off');
 	}
 }
 
 document.addEventListener('DOMContentLoaded', function () {
 	console.log("loaded");
-
+    //when popup opens, send message to background
     chrome.runtime.sendMessage({directive: "open"}, function(response) {
         showArticles(response);
-        // console.log(response)
-        // this.close(); // close the popup when the background finishes processing request
     });
-
+    // listen for clicks to change view
     document.getElementById('toggle-profile').addEventListener('click', switchToProfile);
     document.getElementById('toggle-overview').addEventListener('click', switchToOverview);
-    // makeGraph();
+    makeGraph();
 })
-
-
-
 
 //appending articles to popup overview
 function showArticles(response){
+  // removing duplicates in array
   var result = [];
     $.each(response, function(i, e) {
       if ($.inArray(e, result) == -1) result.push(e);
@@ -42,12 +41,7 @@ function showArticles(response){
   }
 }
 
-// pie chart showing umbrella categories and amount read of each
-var pieChart = $('#overview');
-var pieChartW = 100;
-var pieChartH = 100;
-var pieChartR = Math.min(pieChartW, pieChartH)/2; 
-var pieChartColor = d3.scale.category20b();
+//test pie chart showing umbrella categories and amount read of each
 
 function makeGraph(){
 	(function(d3) {
@@ -60,7 +54,7 @@ function makeGraph(){
       { label: 'Dijkstra', count: 40 }
     ];
 
-    var chart = $('#umbrella-pie-chart')
+    var chart = $('#overview')
 
     var width = 140;
     var height = 140;

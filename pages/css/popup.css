@@ -29,10 +29,12 @@ header {
 	display: inline-block;
 	padding: 8px;
 	background-color: #4D4446;
-	color: #807174;
 	font-size: 1em;
 	margin: 5px 10px 5px 3px;
 }
+
+.on{ color: #E3594B; }
+.off{ color: #807174; }
 
 .toggle-button:hover{ cursor: pointer; }
 
