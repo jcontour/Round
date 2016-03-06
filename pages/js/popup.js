@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // listen for clicks to change view
     document.getElementById('toggle-profile').addEventListener('click', switchToProfile);
     document.getElementById('toggle-overview').addEventListener('click', switchToOverview);
-    makeGraph();
+    // makeGraph();
 })
 
 //appending articles to popup overview
@@ -38,6 +38,8 @@ function showArticles(response){
     });
   for (var i = 0; i < result.length; i ++){
     $('#overview').append("<p>" + result[i] + "</p>")
+    // $('#overview').append("<p>" + result[i]['categories'] + " " + result[i]['url'] + "</p>")
+
   }
 }
 

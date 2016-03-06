@@ -6,6 +6,7 @@ chrome.tabs.onUpdated.addListener(function(info) {
     chrome.tabs.query({active: true}, function(tab){
         // parse url
         url = tab[0].url;
+        // console.log(url)
         var a = $('<a>', { href:url } )[0];
         // are we on nytimes
         if (a.hostname == "www.nytimes.com"){
@@ -17,6 +18,15 @@ chrome.tabs.onUpdated.addListener(function(info) {
             if ( !isNaN(splitpath[0]) && splitpath[0].length == 4) {
 
                 console.log(a.pathname);
+
+                // if (splitpath.length > 5) {
+                //     console.log(splitpath[3] + " " + splitpath[4]);
+                //     articles.push({categories: splitpath[3] + " " + splitpath[4], url: a.pathname});
+                // } else {
+                //     console.log(splitpath[3]);
+                //     articles.push({categories: splitpath[3], url: a.pathname});
+                // }
+
                 articles.push(a.pathname);
             }
         }

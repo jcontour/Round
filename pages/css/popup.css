@@ -1,4 +1,4 @@
-/*dark grey #231F20 med grey #4D4446 light grey #807174 */
+/*dark grey #0C152E med grey #4D4446 light grey #807174 */
 /*pink #E3594B yellow #FEDA39 mint #00C189 blue #009FC5*/
 
 @import url(https://fonts.googleapis.com/css?family=Roboto:900,300);
@@ -9,7 +9,7 @@ html body {
 	font-family: "Roboto";
 	margin: 0;
 	padding: 0;
-	background-color: #231F20;
+	background-color: #0C152E;
 }
 
 .bold { font-weight: 900; letter-spacing: 2px; }
@@ -20,21 +20,21 @@ header {
 	height: 40px;
 	margin-bottom: 20px;
 	padding: 10px 15px 10px 15px;
-	background-color: #231F20;
-	border-top: 2px solid #E3594B;
-	border-bottom: 2px solid #E3594B;
+	background-color: #0C152E;
+	/*border-top: 2px solid #E3594B;*/
+	/*border-bottom: 2px solid #E3594B;*/
 }
 
 .toggle-button {
 	display: inline-block;
 	padding: 8px;
-	background-color: #4D4446;
+	background-color: #313E61;
 	font-size: 1em;
 	margin: 5px 10px 5px 3px;
 }
 
-.on{ color: #E3594B; }
-.off{ color: #807174; }
+.on{ color: #FDF4EA; }
+.off{ color: #0C152E; }
 
 .toggle-button:hover{ cursor: pointer; }
 
@@ -46,9 +46,9 @@ header {
 
 .section {
 	height: 536px;
-	width: 100%;
+	width: calc(100% - 40px);
 	margin: 0;
-	padding: 0;
+	padding: 20px;
 }
 
 .active { display: inline-block; }
@@ -56,14 +56,15 @@ header {
 .inactive {	display: none; }
 
 #overview {
-	border-top: 2px solid #FEDA39;
-	border-bottom: 2px solid #FEDA39;
-	background-color: #231F20;
-	color: white;
+	/*border-top: 2px solid #FEDA39;*/
+	/*border-bottom: 2px solid #FEDA39;*/
+	background-color: #0C152E;
+	color: #FDF4EA;
 }
 
 #profile {
-	border-top: 2px solid #00C189;
-	border-bottom: 2px solid #00C189;
-	background-color: #231F20;
+	/*border-top: 2px solid #00C189;*/
+	/*border-bottom: 2px solid #00C189;*/
+	background-color: #0C152E;
+	color: #FDF4EA;
 }
