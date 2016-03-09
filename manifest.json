@@ -1,13 +1,12 @@
 {
   "name": "Round",
-  "description": "Analyze and provide feedback on news consumption",
+  "description": "Track and provide feedback on news consumption",
   "version": "1.0",
   "manifest_version": 2,
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*"],
-    "js": ["/lib/jquery-min.js"]
+    "js": ["/lib/jquery-min.js", "getmeta.js"]
   }],
-  "web_accessible_resources": [ "pages/profile.html" ],
   "browser_action": {
     "default_title": "Round",
     "default_icon": {
