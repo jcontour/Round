@@ -33,6 +33,7 @@ chrome.runtime.onMessage.addListener(
             case "metadata":
                 console.log("receiving metadata");
                 console.log(request.metadata);
+                saveData(request.metadata);
             break;
             case "popup-open":
                 console.log("popup open");
@@ -67,63 +68,213 @@ function rssCall(category){
     });
 };
 
-// save into storage 
-var info = {
-    topics: {
-        "world": 0,
-        "us": 0,
-        "politics": 0,
-        "nyregion": 0,
-        "business": 0,
-        "opinion": 0,
-        "tech" : 0,
-        "science" : 0,
-        "health" : 0,
-        "sports" : 0,
-        "arts" : 0,
-        "style" : 0,
-        "food" : 0,
-        "travel" : 0,
-        "upshot": 0
-    }, read: {
-        articles: {
-            "world": [],
-            "us": [],
-            "politics": [],
-            "nyregion": [],
-            "business": [],
-            "opinion": [],
-            "tech" : [],
-            "science" : [],
-            "health" : [],
-            "sports" : [],
-            "arts" : [],
-            "style" : [],
-            "food" : [],
-            "travel" : [],
-            "upshot": []
-        }, keywords: []
-    },
-    shouldread: {
-        "world": [],
-        "us": [],
-        "politics": [],
-        "nyregion": [],
-        "business": [],
-        "opinion": [],
-        "tech" : [],
-        "science" : [],
-        "health" : [],
-        "sports" : [],
-        "arts" : [],
-        "style" : [],
-        "food" : [],
-        "travel" : [],
-        "upshot": []
-    }
+// -------------------------------------------
+//          STORAGE FUNCTIONS
+// -------------------------------------------
+
+initStorage();
+
+function saveData(data){
+    // metadata formatted as: headline, category, keywords, url
+
+    // retrieve data from storage
+    chrome.storage.sync.get("data", function (result) {
+        // take a string retreived from storage
+        // parse back into a javascript OBJECT
+        var info = JSON.parse( result.data );
+        console.log(info);
+
+        var category = data.category;
+        console.log("category: ", category);
+
+        var keywords = data.keywords;
+        keywords = keywords.split(",");
+        console.log("keywords: ", keywords);
+
+        info[category]['count'] ++;
+        info[category]['read'].push(data.url);
+        for (var i in keywords) {
+            info[category]['keywords'].push(keywords[i]);
+        }
+
+        console.log(info[category]);
+        
+        var strData = JSON.stringify( info );
+        chrome.storage.sync.set({"data": strData}, function() { 
+            console.log("saved");
+        });
+
+    });
+
 }
-var data = JSON.stringify( info );
 
-chrome.storage.sync.set({"info": data}, function() {
 
+function initStorage(){
+    var info = {
+        "world": {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "us": {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "politics": {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "nyregion": {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "business": {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "opinion": {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "tech" : {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "science" : {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "health" : {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "sports" : {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "arts" : {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "style" : {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "food" : {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "travel" : {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        },
+        "upshot": {
+            count: 0,
+            read: [],
+            keywords: [],
+            recommendation: []
+        }
+    }
+
+    // var info = {
+    //     topics: {
+    //         "world": 0,
+    //         "us": 0,
+    //         "politics": 0,
+    //         "nyregion": 0,
+    //         "business": 0,
+    //         "opinion": 0,
+    //         "tech" : 0,
+    //         "science" : 0,
+    //         "health" : 0,
+    //         "sports" : 0,
+    //         "arts" : 0,
+    //         "style" : 0,
+    //         "food" : 0,
+    //         "travel" : 0,
+    //         "upshot": 0
+    //     }, read: {
+    //         articles: {
+    //             "world": [],
+    //             "us": [],
+    //             "politics": [],
+    //             "nyregion": [],
+    //             "business": [],
+    //             "opinion": [],
+    //             "tech" : [],
+    //             "science" : [],
+    //             "health" : [],
+    //             "sports" : [],
+    //             "arts" : [],
+    //             "style" : [],
+    //             "food" : [],
+    //             "travel" : [],
+    //             "upshot": []
+    //         }, keywords: []
+    //     },
+    //     shouldread: {
+    //         "world": [],
+    //         "us": [],
+    //         "politics": [],
+    //         "nyregion": [],
+    //         "business": [],
+    //         "opinion": [],
+    //         "tech" : [],
+    //         "science" : [],
+    //         "health" : [],
+    //         "sports" : [],
+    //         "arts" : [],
+    //         "style" : [],
+    //         "food" : [],
+    //         "travel" : [],
+    //         "upshot": []
+    //     }
+    // }
+
+    var data = JSON.stringify( info );
+
+    chrome.storage.sync.set({"data": data}, function() { 
+        console.log("saved ", data); 
+    });
+}
+
+
+// storage event listener
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+    for (key in changes) {
+      var storageChange = changes[key];
+      console.log('Storage key "%s" in namespace "%s" changed. ' +
+                  'Old value was "%s", new value is "%s".',
+                  key,
+                  namespace,
+                  storageChange.oldValue,
+                  storageChange.newValue);
+    }
 });
