@@ -1,0 +1,70 @@
+/*dark grey #0C152E med grey #4D4446 light grey #807174 */
+/*pink #E3594B yellow #FEDA39 mint #00C189 blue #009FC5*/
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:900,300);
+
+html body {
+	width: 800px;
+	height: 600px;
+	font-family: "Roboto";
+	margin: 0;
+	padding: 0;
+	background-color: #0C152E;
+}
+
+.bold { font-weight: 900; letter-spacing: 2px; }
+.light { font-weight: 300; }
+
+header {
+	width: calc(100% - 30px);
+	height: 40px;
+	margin-bottom: 20px;
+	padding: 10px 15px 10px 15px;
+	background-color: #0C152E;
+	/*border-top: 2px solid #E3594B;*/
+	/*border-bottom: 2px solid #E3594B;*/
+}
+
+.toggle-button {
+	display: inline-block;
+	padding: 8px;
+	background-color: #313E61;
+	font-size: 1em;
+	margin: 5px 10px 5px 3px;
+}
+
+.on{ color: #FDF4EA; }
+.off{ color: #0C152E; }
+
+.toggle-button:hover{ cursor: pointer; }
+
+#button-wrapper {
+	display: inline-block;
+	position: absolute;
+	right: 0px;
+}
+
+.section {
+	height: 536px;
+	width: calc(100% - 40px);
+	margin: 0;
+	padding: 20px;
+}
+
+.active { display: inline-block; }
+
+.inactive {	display: none; }
+
+#overview {
+	/*border-top: 2px solid #FEDA39;*/
+	/*border-bottom: 2px solid #FEDA39;*/
+	background-color: #0C152E;
+	color: #FDF4EA;
+}
+
+#profile {
+	/*border-top: 2px solid #00C189;*/
+	/*border-bottom: 2px solid #00C189;*/
+	background-color: #0C152E;
+	color: #FDF4EA;
+}

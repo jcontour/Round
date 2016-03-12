@@ -4,67 +4,48 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:900,300);
 
 html body {
-	width: 800px;
-	height: 600px;
-	font-family: "Roboto";
-	margin: 0;
-	padding: 0;
-	background-color: #0C152E;
-}
-
-.bold { font-weight: 900; letter-spacing: 2px; }
-.light { font-weight: 300; }
-
-header {
-	width: calc(100% - 30px);
-	height: 40px;
-	margin-bottom: 20px;
-	padding: 10px 15px 10px 15px;
-	background-color: #0C152E;
-	/*border-top: 2px solid #E3594B;*/
-	/*border-bottom: 2px solid #E3594B;*/
-}
-
-.toggle-button {
-	display: inline-block;
-	padding: 8px;
-	background-color: #313E61;
+	width: 320px;
+	height: 320px;
+	font-family: Roboto;
 	font-size: 1em;
-	margin: 5px 10px 5px 3px;
-}
-
-.on{ color: #FDF4EA; }
-.off{ color: #0C152E; }
-
-.toggle-button:hover{ cursor: pointer; }
-
-#button-wrapper {
-	display: inline-block;
-	position: absolute;
-	right: 0px;
-}
-
-.section {
-	height: 536px;
-	width: calc(100% - 40px);
+	color: white;
 	margin: 0;
-	padding: 20px;
+	padding: 10px;
+	background-color: #0C152E;
 }
 
-.active { display: inline-block; }
-
-.inactive {	display: none; }
-
-#overview {
-	/*border-top: 2px solid #FEDA39;*/
-	/*border-bottom: 2px solid #FEDA39;*/
-	background-color: #0C152E;
-	color: #FDF4EA;
+#logo{
+	margin-left: 0;
 }
 
-#profile {
-	/*border-top: 2px solid #00C189;*/
-	/*border-bottom: 2px solid #00C189;*/
-	background-color: #0C152E;
-	color: #FDF4EA;
+#instruction{
+	width: 40%;
+	float: right;
+	text-align: right;
+	font-size: .75em;
+	position: relative;
+	top: 5px;
+	right: 5px;
+}
+
+#chart{
+	width: 320;
+	height: 320;
+	padding: 10px;
+}
+
+path.slice {
+	stroke-width:2px;
+}
+
+polyline {
+	opacity: .3;
+	stroke: black;
+	stroke-width: 2px;
+	fill: none;
+}
+
+svg path {
+	stroke: white;
+	stroke-width: 1.5;
 }

@@ -9,9 +9,22 @@
     	<script type="text/javascript" src="js/popup.js"></script>
 	</head>
 	<body>
-		<img id="logo" src="img/round_logo.png">
-		<div id="instruction">click on a slice for suggestions</div>
-		<div id="chart"></div>
+		<header>
+			<img id="logo" src="img/round_logo.png">
+
+			<div id="button-wrapper">
+				<div id="toggle-overview" class="toggle-button bold on">OVERVIEW</div>
+				<div id="toggle-profile" class="toggle-button bold off">PROFILE</div>
+			</div>
+		</header>
+
+		<div id="overview" class="section active">
+		<h1>News Overview</h1>
+		</div>
+
+		<div id="profile" class="section inactive">
+		<h1>Profile</h1>
+		</div>
 
 	</body>
 </html>

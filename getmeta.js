@@ -1,3 +1,4 @@
+console.log("getting metadata");
 // getting page metadata
 var headline = $('meta[name=hdl]').attr("content");
 var category = $('meta[name=CG]').attr("content");
