@@ -57,35 +57,6 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-
-// -------------------------------------------
-//          RECOMMENDATION FUNCTIONS
-// -------------------------------------------
-
-// make ajax call to rss feed
-function rssCall(category){
-    var feed = 'http://rss.nytimes.com/services/xml/rss/nyt/' + category + '.xml';
-    // console.log("getting feed: ", feed);
-
-
-    $.ajax(feed, {
-        accepts:{
-            xml:"application/rss+xml"
-        },
-        dataType:"xml",
-        success:function(data) {
-            // limiting to 5 results
-            $(data).find("item:lt(5)").each(function (i) { // or "item" or whatever suits your feed
-                var el = $(this);
-                console.log("------------------------");
-
-                console.log("title      : " + el.find("title").text());
-                console.log("link       : " + el.find("link").text());
-            });
-        }   
-    });
-};
-
 // -------------------------------------------
 //          STORAGE FUNCTIONS
 // -------------------------------------------

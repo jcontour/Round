@@ -5,8 +5,58 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.runtime.sendMessage({directive: "popup-open"}, function(response) {
         // console.log(response);
     });
+
+    $('.rsslink').on('click', function(){
+        console.log("clicked link: ", $(this).attr('id'))
+     // chrome.tabs.create({url: $(this).attr('href')});
+     // return false;
+   });
 });
 
+function getRSS(category){
+    // convert category to rss version
+    if (category == "world"){ category = "World" }
+    else if (category == "us"){ category = "US" }
+    else if (category == "politics"){ category = "Politics" }
+    else if (category == "nyregion"){ category = "NYRegion" }
+    else if (category == "business"){ category = "Business" }
+    else if (category == "opinion"){ category = "Opinion" }
+    else if (category == "tech"){ category = "Technology" }
+    else if (category == "science"){ category = "Science" }
+    else if (category == "health"){ category = "Health" }
+    else if (category == "sports"){ category = "Sports" }
+    else if (category == "arts"){ category = "Arts" }
+    else if (category == "fashion"){ category = "Fashion" }
+    else if (category == "other"){ category = "MostShared" }
+
+
+    // make ajax call to rss feed
+    var feed = 'http://rss.nytimes.com/services/xml/rss/nyt/' + category + '.xml';
+    // console.log("getting feed: ", feed);
+    $.ajax(feed, {
+        accepts:{
+            xml:"application/rss+xml"
+        },
+        dataType:"xml",
+        success:function(data) {
+            // limiting to 5 results
+            $(data).find("item:lt(5)").each(function (i) { // or "item" or whatever suits your feed
+                var el = $(this);
+                console.log("------------------------");
+                console.log("title      : " + el.find("title").text());
+                var text = el.find("title").text();
+                console.log("link       : " + el.find("link").text());
+                var link = el.find("link").text();
+                appendRss(text, link);
+            });
+        }   
+    });
+};
+
+function appendRss(text, link){
+    $('#rss').empty();
+    $('#rss').append("<div class='rsslink' id=" + link + ">" + text + "</div>");
+}
 
 function getData() {
     chrome.storage.sync.get("data", function (result) {
@@ -75,7 +125,18 @@ function initGraph(json) {
       // .attr("fill", function(d, i) { return color(d['count']) } )
       .attr("fill", "#00C189" )
       //this creates the actual SVG path using the associated data (pie) with the arc drawing function
-      .attr("d", arc);
+      .attr("d", arc)
+
+      .on('click', function(d){
+        console.log(d.data.label);
+        getRSS(d.data.label);
+      })
+      .on('mouseover', function(d){
+        $(this).attr("fill", "#E3594B");
+      })
+      .on('mouseout', function(d){
+        $(this).attr("fill", "#00C189");
+      })
 
     // Add a label to each arc slice...
     // arcs.append("svg:text")

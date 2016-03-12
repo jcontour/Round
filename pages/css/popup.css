@@ -28,6 +28,26 @@ html body {
 	right: 5px;
 }
 
+#rss{
+	width: 100%;
+	background-color: #E3594B;
+	font-style: italic;
+	font-size: 1em;
+	margin-bottom: .5em;
+
+}
+
+#rss div{
+	margin: 5px;
+	background-color: #E3594B;
+	color: white;
+}
+
+#rss div:hover{
+	background-color: white;
+	color: #E3594B;
+}
+
 #chart{
 	width: 320;
 	height: 320;
