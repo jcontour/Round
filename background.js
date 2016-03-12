@@ -79,7 +79,7 @@ function saveData(data){
         var info = JSON.parse( result.data );
 
         // category of article
-        var category = data.category;
+        var category = data.category.toLowerCase();
         console.log("category: ", category);
 
         // check against storage categories

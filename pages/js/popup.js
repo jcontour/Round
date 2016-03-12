@@ -5,13 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.runtime.sendMessage({directive: "popup-open"}, function(response) {
         // console.log(response);
     });
-
-    $('.rsslink').on('click', function(){
-        console.log("clicked link: ", $(this).attr('id'))
-     // chrome.tabs.create({url: $(this).attr('href')});
-     // return false;
-   });
 });
+
 
 function getRSS(category){
     // convert category to rss version
@@ -27,9 +22,10 @@ function getRSS(category){
     else if (category == "sports"){ category = "Sports" }
     else if (category == "arts"){ category = "Arts" }
     else if (category == "fashion"){ category = "Fashion" }
-    else if (category == "other"){ category = "MostShared" }
+    else if (category == "other"){ category = "MostViewed" }
 
 
+    var rssItems = []
     // make ajax call to rss feed
     var feed = 'http://rss.nytimes.com/services/xml/rss/nyt/' + category + '.xml';
     // console.log("getting feed: ", feed);
@@ -40,22 +36,40 @@ function getRSS(category){
         dataType:"xml",
         success:function(data) {
             // limiting to 5 results
-            $(data).find("item:lt(5)").each(function (i) { // or "item" or whatever suits your feed
+            $(data).find("item:lt(3)").each(function (i) { // or "item" or whatever suits your feed
                 var el = $(this);
                 console.log("------------------------");
                 console.log("title      : " + el.find("title").text());
                 var text = el.find("title").text();
                 console.log("link       : " + el.find("link").text());
                 var link = el.find("link").text();
-                appendRss(text, link);
+                rssItems.push({text: text, link: link})
             });
+
+            appendRss(rssItems);
         }   
     });
 };
 
-function appendRss(text, link){
+function appendRss(rssArray){
     $('#rss').empty();
-    $('#rss').append("<div class='rsslink' id=" + link + ">" + text + "</div>");
+    for (var i = 0; i < rssArray.length; i++){
+        $('#rss').append("<div class='rsslink' id=" + rssArray[i].link + ">" + rssArray[i].text + "</div>");
+        $('#rss').css("display", "inline-block");
+    }
+    listen();
+}
+
+function listen(){
+    $('.rsslink').on('click', function(){
+        console.log("clicked link: ", $(this).attr('id'))
+        chrome.tabs.create({url: $(this).attr('id')});
+    });
+
+    $('#get-article').on('click', function(){
+        $('#get-article').css('display', 'none');
+        getRSS('other')
+    });
 }
 
 function getData() {
@@ -66,110 +80,182 @@ function getData() {
     });
 }
 
+function isZero(value, index, ar){
+    if (value.count < 1){
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function initGraph(json) {
-    var dataSet = []
+    var data = []
     for (var category in json) {
         console.log(category, " ", json[category]['count']);
-        dataSet.push({
+        data.push({
             label: category,
             count: json[category]['count']
         })
     }
 
-    console.log(dataSet);
+    // check to see if anything has been read
+    if (data.every(isZero)){        //if nothing is read
 
-    var max = d3.max( dataSet, function(d) { return d['count'] });
-    var min = d3.min( dataSet, function(d) { return d['count'] });
+        $('#chart').append("<div id='get-article'><p>You have not read anything!</p><p> Click for suggestions</p></div>");
+        listen();
+
+    } else {        
+
+        $('#chart').empty;
+
+        var dataSet = data;
+
+        console.log(dataSet);
+
+        var max = d3.max( dataSet, function(d) { return d['count'] });
+        var min = d3.min( dataSet, function(d) { return d['count'] });
 
 
-    var canvasWidth = 300, //width
-      canvasHeight = 300,   //height
-      outerRadius = 150,   //radius
-      color = d3.scale.linear()
-            .domain([min, max])
-            .range(['blue', 'beige']);
-      // color = d3.scale.category20c()
+        var canvasWidth = 300,
+          canvasHeight = 300,
+          outerRadius = 150
 
-    
-    var vis = d3.select("#chart")
-      .append("svg:svg") //create the SVG element inside the <body>
-        .data([dataSet]) //associate our data with the document
-        .attr("width", canvasWidth) //set the width of the canvas
-        .attr("height", canvasHeight) //set the height of the canvas
-        .append("svg:g") //make a group to hold our pie chart
-        .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")") // relocate center of pie to 'outerRadius,outerRadius'
+        
+        var vis = d3.select("#chart")
+          .append("svg:svg")
+            .data([dataSet])
+            .attr("width", canvasWidth)
+            .attr("height", canvasHeight)
+            .append("svg:g")
+            .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
 
-    // This will create <path> elements for us using arc data...
-    var arc = d3.svg.arc()
-      .outerRadius(outerRadius);
+        var arc = d3.svg.arc()
+          .outerRadius(function (d, i) { 
+            return outerRadius - (d['data']['count']/max); 
+        });
 
-    var pie = d3.layout.pie() //this will create arc data for us given a list of values
-      .value(function(d) { return d.count; }) // Binding each value to the pie
-      .sort( function(d) { return null; } );
 
-    // Select all <g> elements with class slice (there aren't any yet)
-    var arcs = vis.selectAll("g.slice")
-      // Associate the generated pie data (an array of arcs, each having startAngle,
-      // endAngle and value properties) 
-      .data(pie)
-      // This will create <g> elements for every "extra" data element that should be associated
-      // with a selection. The result is creating a <g> for every object in the data array
-      .enter()
-      // Create a group to hold each slice (we will have a <path> and a <text>
-      // element associated with each slice)
-      .append("svg:g")
-      .attr("class", "slice")    //allow us to style things in the slices (like text)
+        var pie = d3.layout.pie()
+          .value(function(d) { return d.count; })
+          .sort( function(d) { return null; } );
 
-    arcs.append("svg:path")
-      //set the color for each slice to be chosen from the color function defined above
-      // .attr("fill", function(d, i) { return color(d['count']) } )
-      .attr("fill", "#00C189" )
-      //this creates the actual SVG path using the associated data (pie) with the arc drawing function
-      .attr("d", arc)
+        var arcs = vis.selectAll("g.slice")
+          .data(pie)
+          .enter()
+          .append("svg:g")
+          .attr("class", "slice")
 
-      .on('click', function(d){
-        console.log(d.data.label);
-        getRSS(d.data.label);
-      })
-      .on('mouseover', function(d){
-        $(this).attr("fill", "#E3594B");
-      })
-      .on('mouseout', function(d){
-        $(this).attr("fill", "#00C189");
-      })
+        arcs.append("svg:path")
+          .attr("fill", "#00C189" )
+          .attr("d", arc)
 
-    // Add a label to each arc slice...
-    // arcs.append("svg:text")
-    //   .attr("transform", function(d) { //set the label's origin to the center of the arc
-    //     //we have to make sure to set these before calling arc.centroid
-    //     d.outerRadius = outerRadius + 50; // Set Outer Coordinate
-    //     d.innerRadius = outerRadius + 45; // Set Inner Coordinate
-    //     return "translate(" + arc.centroid(d) + ")";
-    //   })
-    //   .attr("text-anchor", "left") //center the text on it's origin
-    //   .style("fill", "Purple")
-    //   .style("font", "bold 12px Arial")
-    //   .text(function(d, i) { return dataSet[i].label; }); //get the label from our original data array
+          .on('click', function(d){
+            console.log(d.data.label);
+            getRSS(d.data.label);
+          })
+          .on('mouseover', function(d){
+            $(this).attr("fill", "#E3594B");
+          })
+          .on('mouseout', function(d){
+            $(this).attr("fill", "#00C189");
+          })
 
-    // Add a count value to the larger arcs, translated to the arc centroid and rotated.
-    arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")
-      .attr("dy", ".35em")
-      .attr("text-anchor", "middle")
-      .attr("transform", function(d) { //set the label's origin to the center of the arc
-        //we have to make sure to set these before calling arc.centroid
-        d.outerRadius = outerRadius; // Set Outer Coordinate
-        d.innerRadius = outerRadius*.3; // Set Inner Coordinate
-        return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")";
-      })
-      .style("fill", "White")
-      .text(function(d) { return d.data.label; });
+        arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")
+          .attr("dy", ".35em")
+          .attr("text-anchor", "middle")
+          .attr("transform", function(d) { //set the label's origin to the center of the arc
+            d.outerRadius = outerRadius; // Set Outer Coordinate
+            d.innerRadius = outerRadius*.3; // Set Inner Coordinate
+            return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")";
+          })
+          .style("fill", "White")
+          .text(function(d) { return d.data.label; });
 
-    // Computes the angle of an arc, converting from radians to degrees.
-    function angle(d) {
-      var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
-      return a > 90 ? a - 180 : a;
+        // Computes the angle of an arc, converting from radians to degrees.
+        function angle(d) {
+          var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
+          return a > 90 ? a - 180 : a;
+        }
+
+        // console.log(data);
+
+        // var max = d3.max( data, function(d) { return d['count'] });
+        // var min = d3.min( data, function(d) { return d['count'] });
+
+
+        // var width = 300, //width
+        //     height = 300,   //height
+        //     radius = Math.min(width, height) / 2,
+        //     innerRadius = 50;
+
+        // var pie = d3.layout.pie()
+        //     .sort(null)
+        //     // .value(function(d){     //length of arc
+        //     //     return d['count']
+        //     // })
+        //     .value(function(d){ return 1 });
+
+        // var arc = d3.svg.arc()
+        //     .innerRadius(innerRadius)
+        //     .outerRadius(function (d) { 
+        //         return (radius - innerRadius) * (d['data']['count'] / max) + innerRadius; 
+        //     });
+
+        // var outlineArc = d3.svg.arc()
+        //     .innerRadius(innerRadius)
+        //     .outerRadius(radius);
+
+        // var svg = d3.select("#chart").append("svg")
+        //     .attr("width", width)
+        //     .attr("height", height)
+        //     .append("g")
+        //     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        // var path = svg.selectAll(".solidArc")
+        //     .data(pie(data))
+        //     .enter().append("path")
+        //     .attr("fill", "#00C189")
+        //     .attr("class", "solidArc")
+        //     // .attr("stroke", "white")
+        //     .attr("d", arc)
+        //     // .on('mouseover', function(d){
+        //     //     $(this).attr("fill", "#E3594B");
+        //     //   })
+        //     // .on('mouseout', function(d){
+        //     //     $(this).attr("fill", "#00C189");
+        //     // })
+
+        // var outerPath = svg.selectAll(".outlineArc")
+        //     .data(pie(data))
+        //     .enter().append("path")
+        //     .attr("fill", "none")
+        //     .attr("class", "outlineArc")
+        //     .attr("d", outlineArc)
+        //     .on('mouseover', function(d){
+        //         $(this).attr("fill", "#E3594B");
+        //       })
+        //     .on('mouseout', function(d){
+        //         $(this).attr("fill", "none");
+        //     })
+        //     // adding text labels
+        //     .append("svg:text")
+        //     .attr("dy", ".35em")
+        //     .attr("text-anchor", "middle")
+        //     .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")"; })
+        //     // .attr("transform", function(d) { //set the label's origin to the center of the arc
+        //     // d.outerRadius = radius; // Set Outer Coordinate
+        //     // d.innerRadius = radius/2; // Set Inner Coordinate
+        //     //     return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")";
+        //     // })
+        //     .style("fill", "White")
+        //     .style("font", "bold 12px Arial")
+        //     .text(function(d) { return d['data']['label']; });
+
+        // // Computes the angle of an arc, converting from radians to degrees.
+        // function angle(d) {
+        //   var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
+        //   return a > 90 ? a - 180 : a;
+        // }        
     }
-
-
 }
 
