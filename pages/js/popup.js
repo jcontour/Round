@@ -1,74 +1,143 @@
 document.addEventListener('DOMContentLoaded', function () {
 	console.log("popup-loaded");
     getData();
-    //when popup opens, send message to background
-    chrome.runtime.sendMessage({directive: "popup-open"}, function(response) {
-        // console.log(response);
-    });
 });
 
 
 function getRSS(category){
     // convert category to rss version
-    if (category == "world"){ category = "World" }
-    else if (category == "us"){ category = "US" }
-    else if (category == "politics"){ category = "Politics" }
-    else if (category == "nyregion"){ category = "NYRegion" }
-    else if (category == "business"){ category = "Business" }
-    else if (category == "opinion"){ category = "Opinion" }
-    else if (category == "tech"){ category = "Technology" }
-    else if (category == "science"){ category = "Science" }
-    else if (category == "health"){ category = "Health" }
-    else if (category == "sports"){ category = "Sports" }
-    else if (category == "arts"){ category = "Arts" }
-    else if (category == "fashion"){ category = "Fashion" }
-    else if (category == "other"){ category = "MostViewed" }
+    switch (category) {
+        case "world":
+            callRSS([{"site": "nyt", "category": "World"}, {"site": "bf", "category": "world"}]);
+            break;
+        case "usa":
+            callRSS([{"site": "nyt", "category": "US"}, {"site": "bf", "category": "usnews"}]);
+            break;
+        case "politics":
+            callRSS([{"site": "nyt", "category": "Politics"}, {"site": "bf", "category": "politics"}]);
+            break;
+        case "business":
+            callRSS([{"site": "nyt", "category": "Business"}, {"site": "bf", "category": "business"}]);
+            break;
+        case "opinion":
+            callRSS([{"site": "nyt", "category": "Opinion"}, {"site": "bf", "category": "ideas"}]);
+            break;
+        case "tech":
+            callRSS([{"site": "nyt", "category": "Technology"}, {"site": "bf", "category": "technology"}]);
+            break;
+        case "science":
+            callRSS([{"site": "nyt", "category": "Science"}, {"site": "bf", "category": "science"}]);
+            break;
+        case "health":
+            callRSS([{"site": "nyt", "category": "Health"}, {"site": "bf", "category": "health"}]);
+            break;
+        case "sports":
+            callRSS([{"site": "nyt", "category": "Sports"}, {"site": "bf", "category": "sports"}]);
+            break;
+        case "culture":
+            callRSS([{"site": "nyt", "category": "Fashion"}, {"site": "bf", "category": "tvandmovies"}]);
+            break;
+        case "other":
+            callRSS([{"site": "nyt", "category": "MostViewed"}, {"site": "bf", "category": "longform"}]);
+            break;
+        default:
+            console.log("other category");
+    }
 
-
-    var rssItems = []
-    // make ajax call to rss feed
-    var feed = 'http://rss.nytimes.com/services/xml/rss/nyt/' + category + '.xml';
-    // console.log("getting feed: ", feed);
-    $.ajax(feed, {
-        accepts:{
-            xml:"application/rss+xml"
-        },
-        dataType:"xml",
-        success:function(data) {
-            // limiting to 5 results
-            $(data).find("item:lt(3)").each(function (i) { // or "item" or whatever suits your feed
-                var el = $(this);
-                console.log("------------------------");
-                console.log("title      : " + el.find("title").text());
-                var text = el.find("title").text();
-                console.log("link       : " + el.find("link").text());
-                var link = el.find("link").text();
-                rssItems.push({text: text, link: link})
-            });
-
-            appendRss(rssItems);
-        }   
-    });
 };
 
-function appendRss(rssArray){
+function callRSS (call) {
+
     $('#rss').empty();
-    for (var i = 0; i < rssArray.length; i++){
-        $('#rss').append("<div class='rsslink' id=" + rssArray[i].link + ">" + rssArray[i].text + "</div>");
-        $('#rss').css("display", "inline-block");
+    $('#rss').append('<div id="close-rss">[ X ]</div>')
+    
+    var rssItems = []
+    var feed;
+
+    for ( var i = 0; i < call.length; i ++) {
+
+        // make ajax call to rss feed
+        if (call[i].site == "nyt") {
+            feed = 'http://rss.nytimes.com/services/xml/rss/nyt/' + call[i].category + '.xml';
+        } else if (call[i].site == "bf") {
+            feed = 'http://www.buzzfeed.com/' + call[i].category + '.xml'
+        }
+        // console.log("getting feed: ", feed);
+        $.ajax(feed, {
+            accepts:{
+                xml:"application/rss+xml"
+            },
+            dataType:"xml",
+            success:function(data) {
+                // limiting to 5 results
+                $(data).find("item:lt(2)").each(function (i) { // or "item" or whatever suits your feed
+                    var el = $(this);
+                    console.log("------------------------");
+                    console.log("title      : " + el.find("title").text());
+                    var text = el.find("title").text();
+                    console.log("link       : " + el.find("link").text());
+                    var link = el.find("link").text();
+                    // rssItems.push({text: text, link: link})
+                    // appendRss({text: text, link: link})
+                    $('#rss').append("<div class='rss-wrapper' id=" + link + ">" + text + "</div>");
+                    // $('#rss').append("<div class='rss-wrapper' id=" + link + "> <div class='rss-id'>" + call[i].site + "</div> <div class='rss-link'>" + text + "</div> </div>");
+                });
+                $('#rss').css("display", "inline-block");
+                listen();
+            }   
+        });
     }
-    listen();
+}
+
+function slideChange(slide){
+    switch(slide){
+        case 1:
+            console.log("slide 1");
+            $('#onboarding').css("background-image", "url(img/onboarding01.png)");
+            $('#onboard-text').html('<p>The news that you consume makes up your view of the world.</p><p>Round helps you see the full picture.</p>');
+            break;
+        case 2: 
+            console.log("slide 2");
+            $('#onboarding').css("background-position", "75% 50%");
+            $('#onboarding').css("background-image", "url(img/onboarding02.png)");
+            $('#onboard-text').html('<p>Round works in the background, taking notes when you read the news.</p>');
+            break;
+        case 3: 
+            console.log("slide 3");
+            $('#onboarding').css("background-position", "center center");
+            $('#onboarding').css("background-image", "url(img/onboarding03.png)");
+            $('#onboard-text').html('<p>If Round notices that you haven\'t seen something important, it\'ll let you know!</p>');
+            break;
+        case 4: 
+            console.log("slide 4");
+            $('#onboarding').css("background-image", "url(img/onboarding04.png)");
+            $('#onboard-text').html('<p>Your reading profile prioritises the topic areas that you might have overlooked</p><p>If you need some help catching up, click on the slice for the latest articles.</p>');
+            break;
+        case 5: 
+            console.log('slide 5');
+            $('#onboarding').css("background-image", " ");
+            $('#onboard-text').html('<p>Let\'s get started!</p>');
+            break;
+    }
 }
 
 function listen(){
-    $('.rsslink').on('click', function(){
+
+    $('#slide-up').on('click', function(){
+        console.log('slide ', slide);
+        slide ++;
+        if (slide > 5) { slide = 1; }
+        slideChange(slide);
+    })
+
+    $('.rss-wrapper').on('click', function(){
         console.log("clicked link: ", $(this).attr('id'))
         chrome.tabs.create({url: $(this).attr('id')});
     });
 
-    $('#get-article').on('click', function(){
-        $('#get-article').css('display', 'none');
-        getRSS('other')
+    $('#close-rss').on('click', function(){
+        $('#rss').hide();
+        console.log("close");
     });
 }
 
@@ -81,29 +150,40 @@ function getData() {
 }
 
 function isZero(value, index, ar){
-    if (value.count < 1){
+    if (value.count == 1 || value.count == "Infinity"){
         return true;
     } else {
         return false;
     }
 }
 
+var slide = 1;
+
+function onboarding(){
+
+    $('#chart').append(" <div id='onboarding'> </div> <div id='onboard-text'></div> <div id='slide-up'>\> </div>")
+    $('#onboarding').css("background-image", "url(img/onboarding01.png)");
+    $('#onboard-text').html('<p>The news that you consume makes up your view of the world</p><p>Round helps you see the full picture</p>');
+    listen();
+}
+
 function initGraph(json) {
+
     var data = []
+    console.log("init graph");
+
     for (var category in json) {
         console.log(category, " ", json[category]['count']);
         data.push({
             label: category,
-            count: json[category]['count']
+            count: (1/json[category]['count'])
         })
     }
 
     // check to see if anything has been read
-    if (data.every(isZero)){        //if nothing is read
-
-        $('#chart').append("<div id='get-article'><p>You have not read anything!</p><p> Click for suggestions</p></div>");
-        listen();
-
+    if (data.every(isZero)){        //if nothing is read, show onboarding
+            $('#logo').hide();
+            onboarding();
     } else {        
 
         $('#chart').empty;

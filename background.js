@@ -13,21 +13,47 @@ chrome.tabs.onUpdated.addListener(function(info) {
         // are we on nytimes
         console.log(a.hostname);
         // parse url
-        if (a.hostname == "www.nytimes.com"){
+        getMeta(a.hostname, url, a);
+    })
+});
+
+// calling content script to get page metadata
+function getMeta(hostname, url, a){
+
+    switch (hostname) {
+        case "www.nytimes.com":
+            console.log("nyt");
+
             var path = a.pathname;
             var splitpath = path.split("/");
             splitpath.shift();
             // checking if first value in array is a four digit number (specific to how nytimes formats article urls)
             if ( !isNaN(splitpath[0]) && splitpath[0].length == 4) {
                 // console.log(a.pathname);
-                // console.log("requesting metadata");
+                console.log("requesting nyt metadata");
                 chrome.tabs.executeScript(null, { // defaults to the current tab
-                    file: "getmeta.js", // script to inject into page and run in sandbox
+                    file: "getnytmeta.js", // script to inject into page and run in sandbox
                 });
             }
-        } 
-    })
-});
+        break;
+        case "www.buzzfeed.com":
+            console.log("buzzfeed");
+
+            var path = a.pathname;
+            var splitpath = path.split("/");
+            splitpath.shift();
+            if ( splitpath.length == 2 ) {
+                // console.log(a.pathname);
+                console.log("requesting buzzfeed metadata");
+                chrome.tabs.executeScript(null, {
+                    file: "getbfmeta.js", 
+                });
+            }            
+        break;
+        default:
+            console.log("not in site list");
+    }
+}
 
 // -------------------------------------------
 //          ON MESSAGE FUNCTIONS
@@ -41,14 +67,6 @@ chrome.runtime.onMessage.addListener(
                 console.log(request.metadata);
                 saveData(request.metadata);
             break;
-            case "popup-open":
-                console.log("popup open");
-                getData(function(data){
-                    console.log("got data: ", data);
-                    sendResponse("hello");          // THIS RESPONSE IS NOT SENDING  <-----------------------------------------------------!!!!!
-                });
-            break;
-
         default:
             // for debugging
             alert("BG.JS MESSAGE OOPS");
@@ -83,10 +101,16 @@ function saveData(data){
         console.log("category: ", category);
 
         // check against storage categories
-        var categories = ["world", "us", "politics", "nyregion", "business", "opinion", "tech", "science", "health", "sports", "arts", "fashion"];
-        if (categories.indexOf(category) == -1) { 
+        var categories = ["world", "usa", "politics", "business", "tech", "science", "health", "opinion", "sports", "culture"];
+        if (category == "us" || category == "usnews" ){
+            category = "usa";
+        } else if ( category ==  "books" || category == "movies" || category == "music" || category == "arts" || category == "lgbt" || category == "community" || category == "food") {
+            category = "culture";
+        } else if (category == "technology") {
+            category = "tech";
+        } else if (categories.indexOf(category) == -1) { 
             console.log("category set as other");
-            category = "other"; 
+            category = "other";
         }
 
         // getting keyword array
@@ -99,9 +123,12 @@ function saveData(data){
             console.log("adding to: ", category)
             info[category]['count'] ++;
             info[category]['read'].push(data.url);
-            for (var i in keywords) {
-                info[category]['keywords'].push(keywords[i]);
+            if ( category !== data.category.toLowerCase() ) {
+                info[category]['subcategories'].push(data.category.toLowerCase());
             }
+            // for (var i in keywords) {
+            //     info[category]['keywords'].push(keywords[i]);
+            // }
         }
         
         // convert back into JSON and save
@@ -116,89 +143,66 @@ function saveData(data){
 function initStorage(){
     var info = {
         "world": {
-            count: 0.5,
+            count: 1,
             read: [],
-            keywords: [],
-            recommendation: []
+            subcategories: []
         },
-        "us": {
-            count: 0.5,
+        "usa": {
+            count: 1,
             read: [],
-            keywords: [],
-            recommendation: []
+            subcategories: []
         },
         "politics": {
-            count: 0.5,
+            count: 1,
             read: [],
-            keywords: [],
-            recommendation: []
-        },
-        "nyregion": {
-            count: 0.5,
-            read: [],
-            keywords: [],
-            recommendation: []
+            subcategories: []
         },
         "business": {
-            count: 0.5,
+            count: 1,
             read: [],
-            keywords: [],
-            recommendation: []
-        },
-        "opinion": {
-            count: 0.5,
-            read: [],
-            keywords: [],
-            recommendation: []
+            subcategories: []
         },
         "tech" : {
-            count: 0.5,
+            count: 1,
             read: [],
-            keywords: [],
-            recommendation: []
+            subcategories: []
         },
         "science" : {
-            count: 0.5,
+            count: 1,
             read: [],
-            keywords: [],
-            recommendation: []
+            subcategories: []
         },
         "health" : {
-            count: 0.5,
+            count: 1,
             read: [],
-            keywords: [],
-            recommendation: []
+            subcategories: []
+        },
+        "opinion": {
+            count: 1,
+            read: [],
+            subcategories: []
         },
         "sports" : {
-            count: 0.5,
+            count: 1,
             read: [],
-            keywords: [],
-            recommendation: []
+            subcategories: []
         },
-        "arts" : {
-            count: 0.5,
+        "culture" : {
+            count: 1,
             read: [],
-            keywords: [],
-            recommendation: []
+            subcategories: []
         },
-        "fashion" : {
-            count: 0.5,
+        "other" : {
+            count: 1,
             read: [],
-            keywords: [],
-            recommendation: []
-        },
-        "other": {
-            count: 0,
-            read: [],
-            keywords: [],
-            recommendation: []
+            subcategories: []
         }
     }
 
     var data = JSON.stringify( info );
 
     chrome.storage.sync.set({"data": data}, function() { 
-        // console.log("saved ", data); 
+        console.log("saved ", data); 
     });
 }
 

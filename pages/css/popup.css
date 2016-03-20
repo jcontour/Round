@@ -16,16 +16,44 @@ html body {
 
 #logo{
 	margin-left: 0;
+	width: 35px;
+	height: 35px;
+	position: absolute;
+	top: 15px;
+	left: 15px;
 }
 
-#instruction{
-	width: 40%;
-	float: right;
-	text-align: right;
-	font-size: .75em;
-	position: relative;
-	top: 5px;
-	right: 5px;
+#onboarding{
+	width: 100%;
+	height: 200px;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+	margin-bottom: 20px;
+	margin-top: 10px;
+}
+
+#onboard-text{
+	width: calc(100% - 50px);
+	color: white;
+	font-size: .8em;
+	text-align: center;
+	padding: 0 25px 0 25px;
+}
+
+#onboard-text p{
+	margin: 5px;
+}
+
+#slide-up{
+	background-color: #E3594B;
+	color: white;
+	padding: 5px;
+	display: inline-block;
+	cursor: pointer;
+	position: absolute;
+	bottom: 60px;
+	right: 15px;
 }
 
 #get-article{
@@ -41,22 +69,52 @@ html body {
 	width: calc(100% - 10px);
 	background-color: #E3594B;
 	font-style: italic;
-	font-size: 1em;
+	font-size: .8em;
 	padding: 5px;
-	margin-bottom: .5em;
-	margin-top: .5em;
+	margin-bottom: 5px;
+	margin-top: 5px;
 	display: none;
+	position: relative;
 }
 
-#rss div{
-	margin: 5px;
-	background-color: #E3594B;
+#close-rss{
+	position: absolute;
+	top: -20px;
+	right: 10px;
+	font-style: normal;
+	/*font-weight: 900;*/
 	color: white;
-	border: 1px solid white;
-	padding: 5px;
+	cursor: pointer;
 }
 
-#rss div:hover{
+.rss-wrapper {
+	display: inline-block;
+	width: calc(100% - 8px);
+	margin: 2px;
+	padding: 2px;
+}
+
+.rss-id {
+	width: calc(8% - 10px);
+	height: calc(100% - 10px);
+	margin: 3.5px 0px 0px 0px;
+	padding: 10px;
+	font-weight: 900;
+	position: relative;
+	float: left;
+	text-align: right;
+}
+
+.rss-link{
+	margin: 2.5px;
+	/*border-left: 1px solid white;*/
+	padding: 5px;
+	width: calc(92% - 35px);
+	position: relative;
+	float: right;
+}
+
+.rss-wrapper:hover{
 	background-color: white;
 	color: #E3594B;
 	cursor: pointer;
@@ -69,9 +127,13 @@ html body {
 }
 
 svg path {
-	stroke: white;
+	stroke: #0C152E;
 	stroke-width: 1.5;
 	cursor: pointer;
+}
+
+svg text {
+	pointer-events: none;
 }
 
 .solidArc{
