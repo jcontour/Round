@@ -104,10 +104,12 @@ function saveData(data){
         var categories = ["world", "usa", "politics", "business", "tech", "science", "health", "opinion", "sports", "culture"];
         if (category == "us" || category == "usnews" ){
             category = "usa";
-        } else if ( category ==  "books" || category == "movies" || category == "music" || category == "arts" || category == "lgbt" || category == "community" || category == "food") {
+        } else if ( category ==  "books" || category == "uk" || category == "movies" || category == "music" || category == "arts" || category == "style" || category == "lgbt" || category == "community" || category == "food") {
             category = "culture";
         } else if (category == "technology") {
             category = "tech";
+        } else if (category == "uknews") {
+            category = "world";
         } else if (categories.indexOf(category) == -1) { 
             console.log("category set as other");
             category = "other";
