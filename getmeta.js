@@ -1,15 +1,3 @@
-// chrome.tabs.query({active: true, currentWindow: true}, function(tab){
-//     // parse url
-//     url = tab[0].url;
-
-    // var a = $('<a>', { href:url } )[0];
-    // // are we on nytimes
-    // console.log(a.hostname);
-    // // parse url
-    // getMeta(a.hostname, url, a);
-// })
-
-
 chrome.runtime.sendMessage({directive: "get-url"}, function(response) {
     console.log("received a response!!!");
     console.log("message response ------------------ ", response);
