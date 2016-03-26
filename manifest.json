@@ -5,7 +5,8 @@
   "manifest_version": 2,
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*", "http://www.nytimes.com/*", "https://www.buzzfeed.com/*"],
-    "js": ["/lib/jquery-min.js", "getnytmeta.js", "getbfmeta.js"]
+    "js": ["/lib/jquery-min.js", "getmeta.js"],
+    "run_at": "document_idle"
   }],
   "browser_action": {
     "default_title": "Round",

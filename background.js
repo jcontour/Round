@@ -3,57 +3,64 @@
 // -------------------------------------------
 
 //when url changes
-chrome.tabs.onUpdated.addListener(function(info) {
-    // check what url is
-    chrome.tabs.query({active: true, currentWindow: true}, function(tab){
-        // parse url
-        url = tab[0].url;
+// chrome.tabs.onUpdated.addListener(function(info) {
 
-        var a = $('<a>', { href:url } )[0];
-        // are we on nytimes
-        console.log(a.hostname);
-        // parse url
-        getMeta(a.hostname, url, a);
-    })
-});
+//     document.addEventListener('DOMContentLoaded', function (info) {
+//         // check what url is
+//         chrome.tabs.query({active: true, currentWindow: true}, function(tab){
+//             chrome.tabs.executeScript(null, { // defaults to the current tab
+//                 file: "getmeta.js", // script to inject into page and run in sandbox
+//             });
+
+//             // parse url
+//             // url = tab[0].url;
+
+//             // var a = $('<a>', { href:url } )[0];
+//             // // are we on nytimes
+//             // console.log(a.hostname);
+//             // // parse url
+//             // getMeta(a.hostname, url, a);
+//         // })
+//     // });
+// });
 
 // calling content script to get page metadata
-function getMeta(hostname, url, a){
+// function getMeta(hostname, url, a){
 
-    switch (hostname) {
-        case "www.nytimes.com":
-            console.log("nyt");
+//     switch (hostname) {
+//         case "www.nytimes.com":
+//             console.log("nyt");
 
-            var path = a.pathname;
-            var splitpath = path.split("/");
-            splitpath.shift();
-            // checking if first value in array is a four digit number (specific to how nytimes formats article urls)
-            if ( !isNaN(splitpath[0]) && splitpath[0].length == 4) {
-                // console.log(a.pathname);
-                console.log("requesting nyt metadata");
-                chrome.tabs.executeScript(null, { // defaults to the current tab
-                    file: "getnytmeta.js", // script to inject into page and run in sandbox
-                });
-            }
-        break;
-        case "www.buzzfeed.com":
-            console.log("buzzfeed");
+//             var path = a.pathname;
+//             var splitpath = path.split("/");
+//             splitpath.shift();
+//             // checking if first value in array is a four digit number (specific to how nytimes formats article urls)
+//             if ( !isNaN(splitpath[0]) && splitpath[0].length == 4) {
+//                 // console.log(a.pathname);
+//                 console.log("requesting nyt metadata");
+//                 chrome.tabs.executeScript(null, { // defaults to the current tab
+//                     file: "getnytmeta.js", // script to inject into page and run in sandbox
+//                 });
+//             }
+//         break;
+//         case "www.buzzfeed.com":
+//             console.log("buzzfeed");
 
-            var path = a.pathname;
-            var splitpath = path.split("/");
-            splitpath.shift();
-            if ( splitpath.length == 2 ) {
-                // console.log(a.pathname);
-                console.log("requesting buzzfeed metadata");
-                chrome.tabs.executeScript(null, {
-                    file: "getbfmeta.js", 
-                });
-            }            
-        break;
-        default:
-            console.log("not in site list");
-    }
-}
+//             var path = a.pathname;
+//             var splitpath = path.split("/");
+//             splitpath.shift();
+//             if ( splitpath.length == 2 ) {
+//                 // console.log(a.pathname);
+//                 console.log("requesting buzzfeed metadata");
+//                 chrome.tabs.executeScript(null, {
+//                     file: "getbfmeta.js", 
+//                 });
+//             }            
+//         break;
+//         default:
+//             console.log("not in site list");
+//     }
+// }
 
 // -------------------------------------------
 //          ON MESSAGE FUNCTIONS
@@ -64,8 +71,15 @@ chrome.runtime.onMessage.addListener(
         switch (request.directive) {
             case "metadata":
                 console.log("receiving metadata");
-                console.log(request.metadata);
+                console.log(request.metadata.site);
                 saveData(request.metadata);
+            break;
+            case "get-url":
+                chrome.tabs.query( { active: true, currentWindow: true}, function(tab){
+                    console.log("current url: ", tab[0].url);
+                    sendResponse(tab[0].url);
+                });
+                return true;
             break;
         default:
             // for debugging
@@ -100,7 +114,7 @@ function saveData(data){
         var category = data.category.toLowerCase();
         console.log("category: ", category);
 
-        // check against storage categories
+        // check page category against storage categories
         var categories = ["world", "usa", "politics", "business", "tech", "science", "health", "opinion", "sports", "culture"];
         if (category == "us" || category == "usnews" ){
             category = "usa";
