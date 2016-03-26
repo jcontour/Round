@@ -1,6 +1,5 @@
 chrome.runtime.sendMessage({directive: "get-url"}, function(response) {
-    console.log("received a response!!!");
-    console.log("message response ------------------ ", response);
+    console.log("url response ------------------ ", response);
     getMeta(response);
 });
 
@@ -25,8 +24,10 @@ function getMeta(url){
                 console.log("requesting nyt metadata");
                 nyt(function(metadata){
                     console.log(metadata);
-                    chrome.runtime.sendMessage({directive: "metadata", metadata: metadata});
+                    chrome.runtime.sendMessage({directive: "metadata", metadata: metadata, isArticle: true});
                 })
+            } else {
+                chrome.runtime.sendMessage({directive: "metadata", isArticle: false});
             }
         break;
         case "www.buzzfeed.com":
@@ -40,12 +41,15 @@ function getMeta(url){
                 console.log("requesting buzzfeed metadata");
                 buzzfeed(function(metadata){
                     console.log(metadata);
-                    chrome.runtime.sendMessage({directive: "metadata", metadata: metadata});
-                })
+                    chrome.runtime.sendMessage({directive: "metadata", metadata: metadata, isArticle: true});
+                }) 
+            } else {
+                chrome.runtime.sendMessage({directive: "metadata", isArticle: false});
             }            
         break;
         default:
             console.log("not in site list");
+            chrome.runtime.sendMessage({directive: "metadata", isArticle: false});
     }
 }
 
@@ -87,6 +91,3 @@ function buzzfeed(callback){
 
     callback(metadata);
 }
-
-
-// chrome.runtime.sendMessage({directive: "metadata", metadata: metadata});

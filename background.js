@@ -7,8 +7,14 @@ chrome.runtime.onMessage.addListener(
         switch (request.directive) {
             case "metadata":
                 console.log("receiving metadata");
-                console.log(request.metadata.site);
-                saveData(request.metadata);
+                // console.log(request)
+                console.log(request.isArticle);
+                if (request.isArticle){
+                    getTime(request.metadata, true);
+                } else {
+                   console.log("not article") 
+                   getTime(request.metadata, false);
+                };
             break;
             case "get-url":
                 chrome.tabs.query( { active: true, currentWindow: true}, function(tab){
@@ -25,6 +31,37 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
+
+// -------------------------------------------
+//          GETTING TIME SPENT ON ARTICLE
+// -------------------------------------------
+
+var currArticleState = false;
+var prevArticleState = false;
+var currTime = 0;
+var prevTime = 0;
+var timeSpent = 0;
+var currArticleInfo, prevArticleInfo;
+
+function getTime(data, isArticle){
+
+    prevArticleInfo = currArticleInfo;      // saving data
+    currArticleInfo = data;
+
+    prevArticleState = currArticleState;    // saving state
+    currArticleState = isArticle;
+
+    prevTime = currTime;                    // getting time
+    currTime = Date.now();
+
+    if (prevArticleState) {                                     // if previous page was an article, save the info
+        timeSpent = Math.ceil((currTime - prevTime)/1000);      // calculate time spent in seconds
+        console.log("spent ", timeSpent, " seconds on ", prevArticleInfo);
+        saveData(prevArticleInfo, timeSpent);
+    }
+}
+
+
 // -------------------------------------------
 //          STORAGE FUNCTIONS
 // -------------------------------------------
@@ -37,7 +74,7 @@ function getData(callback){
     });
 }
 
-function saveData(data){
+function saveData(data, timeSpent){
     // metadata formatted as: headline, category, keywords, url
 
     // retrieve data from storage
@@ -75,9 +112,8 @@ function saveData(data){
             console.log("adding to: ", category)
             info[category]['count'] ++;
             info[category]['read'].push(data.url);
-            if ( category !== data.category.toLowerCase() ) {
-                info[category]['subcategories'].push(data.category.toLowerCase());
-            }
+            info[category]['timeSpent'] += timeSpent;
+
             // for (var i in keywords) {
             //     info[category]['keywords'].push(keywords[i]);
             // }
@@ -97,57 +133,57 @@ function initStorage(){
         "world": {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         },
         "usa": {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         },
         "politics": {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         },
         "business": {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         },
         "tech" : {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         },
         "science" : {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         },
         "health" : {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         },
         "opinion": {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         },
         "sports" : {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         },
         "culture" : {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         },
         "other" : {
             count: 1,
             read: [],
-            subcategories: []
+            timeSpent: 0
         }
     }
 
