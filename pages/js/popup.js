@@ -95,12 +95,12 @@ function listen(){      //  event listeners
          }
     })
 
-    $('.rss-wrapper').on('click', function(){   // on article click, open new tab with link
+    $('.rss-wrapper').off('click').on('click', function(){   // on article click, open new tab with link
         console.log("clicked link: ", $(this).attr('id'))
         chrome.tabs.create({url: $(this).attr('id')});
     });
 
-    $('#close-rss').on('click', function(){     // close rss box
+    $('#close-rss').off('click').on('click', function(){     // close rss box
         $('#rss').empty();
         $('#rss').hide();
         console.log("close");
@@ -201,7 +201,6 @@ function initGraph(json) {
     var canvasWidth = 300,
       canvasHeight = 300,
       outerRadius = 150
-
     
     var vis = d3.select("#chart")
       .append("svg:svg")
@@ -216,6 +215,11 @@ function initGraph(json) {
         return outerRadius - (d['data']['count']/max); 
     });
 
+    // --------------------------------------------------------------------------------- < not working
+    var color = d3.scale.linear()
+        .domain([0, 5])
+        .range(["#002419", "#00FCB3"])
+    // ---------------------------------------------------------------------------------
 
     var pie = d3.layout.pie()
       .value(function(d) { return d.count; })
@@ -228,7 +232,7 @@ function initGraph(json) {
       .attr("class", "slice")
 
     arcs.append("svg:path")
-      .attr("fill", "#00C189" )
+      .attr("fill", function(d) { return color(d['count']) } )
       .attr("d", arc)
 
       .on('click', function(d){
@@ -239,7 +243,7 @@ function initGraph(json) {
         $(this).attr("fill", "#E3594B");
       })
       .on('mouseout', function(d){
-        $(this).attr("fill", "#00C189");
+        $(this).attr("fill", function(d) { return color(d.count); } )
       })
 
     arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")

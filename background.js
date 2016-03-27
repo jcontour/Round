@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener(
 
 
 // -------------------------------------------
-//          GETTING TIME SPENT ON ARTICLE
+//          OTHER FUNCTIONS
 // -------------------------------------------
 
 var currArticleState = false;
@@ -106,17 +106,20 @@ function saveData(data, timeSpent){
         var keywords = data.keywords;
         keywords = keywords.split(",");
 
-        // if it hasn't been read already
-        // add it to the storage
-        if (info[category]['read'].indexOf(data.url) == -1){
+        if (data.url in info[category]['read']) {       // if article read already, add timespent to existing log
+            console.log("article read already");
+            console.log("adding ", timeSpent, " to log");
+            info[category]['read'][data.url] += timeSpent;            
+        } else {                                        // if not read, add it log
+            console.log("article not read")
             console.log("adding to: ", category)
             info[category]['count'] ++;
-            info[category]['read'].push(data.url);
+            info[category]['read'][data.url] = timeSpent;
             info[category]['timeSpent'] += timeSpent;
 
-            // for (var i in keywords) {
-            //     info[category]['keywords'].push(keywords[i]);
-            // }
+            for (var i in keywords) {
+                info[category]['keywords'].push(keywords[i]);
+            }
         }
         
         // convert back into JSON and save
@@ -132,59 +135,70 @@ function initStorage(){
     var info = {
         "world": {
             count: 1,
-            read: [],
+            read: {},
+            keywords: [],
             timeSpent: 0
         },
         "usa": {
             count: 1,
-            read: [],
+            read: {},
+            keywords: [],
             timeSpent: 0
         },
         "politics": {
             count: 1,
-            read: [],
+            read: {},
+            keywords: [],
             timeSpent: 0
         },
         "business": {
             count: 1,
-            read: [],
+            read: {},
+            keywords: [],
             timeSpent: 0
         },
         "tech" : {
             count: 1,
             read: [],
+            keywords: [],
             timeSpent: 0
         },
         "science" : {
             count: 1,
-            read: [],
+            read: {},
+            keywords: [],
             timeSpent: 0
         },
         "health" : {
             count: 1,
-            read: [],
+            read: {},
+            keywords: [],
             timeSpent: 0
         },
         "opinion": {
             count: 1,
-            read: [],
+            read: {},
+            keywords: [],
             timeSpent: 0
         },
         "sports" : {
             count: 1,
-            read: [],
+            read: {},
+            keywords: [],
             timeSpent: 0
         },
         "culture" : {
             count: 1,
-            read: [],
+            read: {},
+            keywords: [],
             timeSpent: 0
         },
         "other" : {
             count: 1,
-            read: [],
+            read: {},
+            keywords: [],
             timeSpent: 0
-        }
+        }, 
     }
 
     var data = JSON.stringify( info );
