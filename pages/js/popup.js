@@ -11,7 +11,7 @@ function getData() {
         console.log("init graph");
 
         for (var category in json) {                    // load data into array
-            console.log(category, " ", json[category]['count']);
+            // console.log(category, " ", json[category]['count']);
             data.push({
                 label: category,
                 count: (1/json[category]['count'])      // transform count to show less-read sections
@@ -24,6 +24,8 @@ function getData() {
                 onboarding();
         } else {        
             initGraph(data);            // otherwise, show graph
+            showProfile(profile);
+            listen();
         }
     });
 }
@@ -48,31 +50,26 @@ function onboarding(){          // init onboarding
 function slideChange(slide){    // change onboarding slides on click
     switch(slide){
         case 1:
-            console.log("slide 1");
             $('#onboarding').css("background-image", "url(img/onboarding01.png)");
             $('#onboarding').css("background-size", "80%");
             $('#onboard-text').html('<p>The news that you consume makes up your view of the world.</p><p>Round helps you see the full picture.</p>');
             break;
         case 2: 
-            console.log("slide 2");
             $('#onboarding').css("background-position", "75% 50%");
             $('#onboarding').css("background-size", "contain");
             $('#onboarding').css("background-image", "url(img/onboarding02.png)");
             $('#onboard-text').html('<p>Round works in the background, taking notes when you read the news.</p>');
             break;
         case 3: 
-            console.log("slide 3");
             $('#onboarding').css("background-position", "center center");
             $('#onboarding').css("background-image", "url(img/onboarding03.png)");
             $('#onboard-text').html('<p>If Round notices that you haven\'t seen something important, it\'ll let you know!</p>');
             break;
         case 4: 
-            console.log("slide 4");
             $('#onboarding').css("background-image", "url(img/onboarding04.png)");
             $('#onboard-text').html('<p>Your reading profile prioritises the topic areas that you might have overlooked</p><p>If you need some help catching up, click on a topic for the latest articles.</p>');
             break;
         case 5: 
-            console.log('slide 5');
             $('#onboarding').css("background-image", "url(img/onboarding05.png)");
             $('#slide-up').text("Help me out here!").css("font-style", "italic");
             $('#onboard-text').html('<p>Let\'s get started!</p> <p>Read articles as you would normally, or start with some suggestions.</p>');
@@ -81,12 +78,11 @@ function slideChange(slide){    // change onboarding slides on click
 }
 
 var slide = 1;
+var profile = false;
 
 function listen(){      //  event listeners
 
     $('#slide-up').on('click', function(){      // change slide button
-        console.log('slide ', slide);
-        
         if (slide < 5) {                        // going through 5 slides
             slide ++;
             slideChange(slide);
@@ -103,8 +99,26 @@ function listen(){      //  event listeners
     $('#close-rss').off('click').on('click', function(){     // close rss box
         $('#rss').empty();
         $('#rss').hide();
-        console.log("close");
     });
+
+    $('#go-profile').off('click').on('click', function(){
+        console.log("profile")
+        profile = !profile;
+        showProfile(profile);
+    });
+}
+
+function showProfile(show){
+    if (show == true) {
+        $('#chart').hide();
+        $('#rss').hide();
+        $('#profile').show();
+        $('#go-profile').attr("src", "img/chart.png");
+    } else {
+        $('#profile').hide();
+        $('#chart').show();
+        $('#go-profile').attr("src", "img/profile.png");
+    }
 }
 
 
@@ -192,11 +206,8 @@ function initGraph(json) {
 
     var dataSet = json;
 
-    console.log(dataSet);
-
     var max = d3.max( dataSet, function(d) { return d['count'] });
     var min = d3.min( dataSet, function(d) { return d['count'] });
-
 
     var canvasWidth = 300,
       canvasHeight = 300,
@@ -215,36 +226,30 @@ function initGraph(json) {
         return outerRadius - (d['data']['count']/max); 
     });
 
-    // --------------------------------------------------------------------------------- < not working
     var color = d3.scale.linear()
-        .domain([0, 5])
-        .range(["#002419", "#00FCB3"])
-    // ---------------------------------------------------------------------------------
+        .domain([0, max])
+        .range(["#002419", "#00C189"])
+        .interpolate(d3.interpolateHcl)
+        ;
 
     var pie = d3.layout.pie()
-      .value(function(d) { return d.count; })
-      .sort( function(d) { return null; } );
+      .value( function(d) { return d.count; } )
+      .sort( function(d) { return null; } )
+      ;
 
     var arcs = vis.selectAll("g.slice")
       .data(pie)
       .enter()
       .append("svg:g")
       .attr("class", "slice")
+      ;
 
     arcs.append("svg:path")
-      .attr("fill", function(d) { return color(d['count']) } )
+      // .attr("fill", '#00C189' )
+      .attr("fill", function(d) { return color(d.value) } )
       .attr("d", arc)
-
-      .on('click', function(d){
-        console.log(d.data.label);
-        getRSS(d.data.label);
-      })
-      .on('mouseover', function(d){
-        $(this).attr("fill", "#E3594B");
-      })
-      .on('mouseout', function(d){
-        $(this).attr("fill", function(d) { return color(d.count); } )
-      })
+      .on('click', function(d){ getRSS(d.data.label); })
+      ;
 
     arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")
       .attr("dy", ".35em")
@@ -253,9 +258,10 @@ function initGraph(json) {
         d.outerRadius = outerRadius; // Set Outer Coordinate
         d.innerRadius = outerRadius*.3; // Set Inner Coordinate
         return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")";
-      })
+        })
       .style("fill", "White")
-      .text(function(d) { return d.data.label; });
+      .text(function(d) { return d.data.label; })
+      ;
 
     // Computes the angle of an arc, converting from radians to degrees.
     function angle(d) {
