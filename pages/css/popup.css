@@ -106,13 +106,13 @@ html body {
 .rss-wrapper {
 	display: inline-block;
 	width: calc(100% - 8px);
-	margin: 2px;
-	padding: 2px;
+/*	margin: 2px;
+*/	padding: 2px;
 }
 
-.rss-id {
+.link-source {
 	width: calc(8% - 10px);
-	height: calc(100% - 10px);
+	height: calc(100% - 15px);
 	margin: 3.5px 0px 0px 0px;
 	padding: 10px;
 	font-weight: 900;
@@ -121,14 +121,15 @@ html body {
 	text-align: right;
 }
 
-.rss-link{
+.link-title {
 	margin: 2.5px;
 	/*border-left: 1px solid white;*/
 	padding: 5px;
-	width: calc(92% - 35px);
+	width: calc(92% - 25px);
 	position: relative;
 	float: right;
-}
+} 
+
 
 .rss-wrapper:hover{
 	background-color: white;
@@ -166,7 +167,7 @@ svg text {
 	z-index: 1;
 }
 
-/*-----------------------------------*/
+/*-----------------------------------
 /*			USER PROFILE 			 */
 /*-----------------------------------*/
 

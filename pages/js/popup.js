@@ -124,39 +124,53 @@ function showProfile(show){
 
 function getRSS(category){
 
+    $('#rss').empty();
+    $('#rss').append('<div id="close-rss">[ X ]</div>')
+
     switch (category) {             // convert call to site specific rss categories
         case "world":
-            callRSS([{"site": "nyt", "category": "World"}, {"site": "bf", "category": "world"}]);
+            callRSS({"site": "nyt", "category": "World"}); 
+            callRSS({"site": "bf", "category": "world"});
             break;
         case "usa":
-            callRSS([{"site": "nyt", "category": "US"}, {"site": "bf", "category": "usnews"}]);
+            callRSS({"site": "nyt", "category": "US"}); 
+            callRSS({"site": "bf", "category": "usnews"});
             break;
         case "politics":
-            callRSS([{"site": "nyt", "category": "Politics"}, {"site": "bf", "category": "politics"}]);
+            callRSS({"site": "nyt", "category": "Politics"}); 
+            callRSS({"site": "bf", "category": "politics"});
             break;
         case "business":
-            callRSS([{"site": "nyt", "category": "Business"}, {"site": "bf", "category": "business"}]);
+            callRSS({"site": "nyt", "category": "Business"}); 
+            callRSS({"site": "bf", "category": "business"});
             break;
         case "opinion":
-            callRSS([{"site": "nyt", "category": "Opinion"}, {"site": "bf", "category": "community"}]);
+            callRSS({"site": "nyt", "category": "Opinion"}); 
+            callRSS({"site": "bf", "category": "community"});
             break;
         case "tech":
-            callRSS([{"site": "nyt", "category": "Technology"}, {"site": "bf", "category": "technology"}]);
+            callRSS({"site": "nyt", "category": "Technology"}); 
+            callRSS({"site": "bf", "category": "technology"});
             break;
         case "science":
-            callRSS([{"site": "nyt", "category": "Science"}, {"site": "bf", "category": "science"}]);
+            callRSS({"site": "nyt", "category": "Science"}); 
+            callRSS({"site": "bf", "category": "science"});
             break;
         case "health":
-            callRSS([{"site": "nyt", "category": "Health"}, {"site": "bf", "category": "health"}]);
+            callRSS({"site": "nyt", "category": "Health"}); 
+            callRSS({"site": "bf", "category": "health"});
             break;
         case "sports":
-            callRSS([{"site": "nyt", "category": "Sports"}, {"site": "bf", "category": "sports"}]);
+            callRSS({"site": "nyt", "category": "Sports"}); 
+            callRSS({"site": "bf", "category": "sports"});
             break;
         case "culture":
-            callRSS([{"site": "nyt", "category": "FashionandStyle"}, {"site": "bf", "category": "culture"}]);
+            callRSS({"site": "nyt", "category": "FashionandStyle"}); 
+            callRSS({"site": "bf", "category": "culture"});
             break;
         case "other":
-            callRSS([{"site": "nyt", "category": "MostViewed"}, {"site": "bf", "category": "index"}]);
+            callRSS({"site": "nyt", "category": "MostViewed"}); 
+            callRSS({"site": "bf", "category": "index"});
             break;
         default:
             console.log("other category");
@@ -166,39 +180,36 @@ function getRSS(category){
 
 function callRSS (call) {
 
-    $('#rss').empty();
-    $('#rss').append('<div id="close-rss">[ X ]</div>')
-    
     var rssItems = []
-    var feed;
-
-    for ( var i = 0; i < call.length; i ++) {
-        if (call[i].site == "nyt") {
-            feed = 'http://rss.nytimes.com/services/xml/rss/nyt/' + call[i].category + '.xml';
-        } else if (call[i].site == "bf") {
-            feed = 'http://www.buzzfeed.com/' + call[i].category + '.xml'
-        }
-        // console.log("getting feed: ", feed);
-        $.ajax(feed, {                                          // make ajax call to rss feed
-            accepts:{
-                xml:"application/rss+xml"
-            },
-            dataType:"xml",
-            success:function(data) {
-                $(data).find("item:lt(2)").each(function (i) {  // getting two items from each feed 
-                    var el = $(this);
-                    console.log("------------------------");
-                    console.log("title      : " + el.find("title").text());
-                    var text = el.find("title").text();
-                    console.log("link       : " + el.find("link").text());
-                    var link = el.find("link").text();
-                    $('#rss').append("<div class='rss-wrapper' id=" + link + ">" + text + "</div>");    // appending articles to rss section
-                });
-                $('#rss').css("display", "inline-block");   // show articles once all are appended
-                listen();                                   // listen for clicks
-            }   
-        });
+        
+    if (call.site == "nyt") {
+    feed = 'http://rss.nytimes.com/services/xml/rss/nyt/' + call.category + '.xml';
+    } else if (call.site == "bf") {
+    feed = 'http://www.buzzfeed.com/' + call.category + '.xml'
     }
+
+    $.ajax(feed, {                                     // make ajax call to rss feed
+        accepts:{
+            xml:"application/rss+xml"
+        },
+        dataType:"xml",
+        success:function(data) {
+            // console.log("data: ", data)
+            // console.log("site ", call[i].site, " title ", text, " link ", link);
+            $(data).find("item:lt(2)").each(function (i) {  // getting two items from each feed 
+                var el = $(this);
+                console.log("------------------------");
+                // console.log("title      : " + el.find("title").text());
+                var text = el.find("title").text();
+                // console.log("link       : " + el.find("link").text());
+                var link = el.find("link").text();
+                console.log("site ", call.site, " title ", text, " link ", link);
+                $('#rss').append("<div class='rss-wrapper' id=" + link + "><div class='link-source'> " + call.site + "</div> <div class='link-title'> "  + text + "</div></div>");    // appending articles to rss section
+                });
+            $('#rss').css("display", "inline-block");   // show articles once all are appended
+            listen();                                   // listen for clicks
+        }   
+    });
 }
 
 function initGraph(json) {
