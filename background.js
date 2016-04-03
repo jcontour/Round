@@ -59,6 +59,10 @@ function getTime(data, isArticle){
         console.log("spent ", timeSpent, " seconds on ", prevArticleInfo);
         saveData(prevArticleInfo, timeSpent);
     }
+
+    if (currArticleState){                  // automatically add current article into data, time will be logged on page change
+        saveData(currArticleInfo, 0);
+    } 
 }
 
 
@@ -106,20 +110,20 @@ function saveData(data, timeSpent){
         var keywords = data.keywords;
         keywords = keywords.split(",");
 
-        if (data.url in info[category]['read']) {       // if article read already, add timespent to existing log
-            console.log("article read already");
-            console.log("adding ", timeSpent, " to log");
-            info[category]['read'][data.url] += timeSpent;            
-        } else {                                        // if not read, add it log
+        // if (data.url in info[category]['read']) {       // if article read already, add timespent to existing log
+        if (info[category]['read'].indexOf(data.url) == -1){
             console.log("article not read")
             console.log("adding to: ", category)
             info[category]['count'] ++;
-            info[category]['read'][data.url] = timeSpent;
-            info[category]['timeSpent'] += timeSpent;
-
+            info[category]['read'].push(data.url);
+            // info[category]['timeSpent'] += timeSpent;
             for (var i in keywords) {
                 info[category]['keywords'].push(keywords[i]);
-            }
+            }                    
+        } else {                                        // if not read, add it log
+            console.log("article read already");
+            console.log("adding ", timeSpent, " to log");
+            info[category]['timeSpent'] += timeSpent;    
         }
         
         // convert back into JSON and save
@@ -135,25 +139,25 @@ function initStorage(){
     var info = {
         "world": {
             count: 1,
-            read: {},
+            read: [],
             keywords: [],
             timeSpent: 0
         },
         "usa": {
             count: 1,
-            read: {},
+            read: [],
             keywords: [],
             timeSpent: 0
         },
         "politics": {
             count: 1,
-            read: {},
+            read: [],
             keywords: [],
             timeSpent: 0
         },
         "business": {
             count: 1,
-            read: {},
+            read: [],
             keywords: [],
             timeSpent: 0
         },
@@ -165,37 +169,37 @@ function initStorage(){
         },
         "science" : {
             count: 1,
-            read: {},
+            read: [],
             keywords: [],
             timeSpent: 0
         },
         "health" : {
             count: 1,
-            read: {},
+            read: [],
             keywords: [],
             timeSpent: 0
         },
         "opinion": {
             count: 1,
-            read: {},
+            read: [],
             keywords: [],
             timeSpent: 0
         },
         "sports" : {
             count: 1,
-            read: {},
+            read: [],
             keywords: [],
             timeSpent: 0
         },
         "culture" : {
             count: 1,
-            read: {},
+            read: [],
             keywords: [],
             timeSpent: 0
         },
         "other" : {
             count: 1,
-            read: {},
+            read: [],
             keywords: [],
             timeSpent: 0
         }, 

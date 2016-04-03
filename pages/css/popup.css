@@ -1,7 +1,9 @@
 /*dark grey #0C152E med grey #4D4446 light grey #807174 */
 /*pink #E3594B yellow #FEDA39 mint #00C189 blue #009FC5*/
 
-@import url(https://fonts.googleapis.com/css?family=Roboto:900,300);
+@import url(https://fonts.googleapis.com/css?family=Roboto:700,300,100|Roboto+Slab:300);
+/*@import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700italic|Bitter:400,400italic|Arvo:400,700italic);*/
+/*@import url(https://fonts.googleapis.com/css?family=Oswald:300,700);*/
 
 html body {
 	width: 320px;
@@ -32,6 +34,10 @@ html body {
 	right: 15px;
 	cursor: pointer;
 }
+
+/*-----------------------------------*/
+/*			ONBOARDING	 			 */
+/*-----------------------------------*/
 
 #onboarding{
 	width: 100%;
@@ -81,10 +87,13 @@ html body {
 	margin: 0;
 }
 
+/*-----------------------------------*/
+/*			RSS						 */
+/*-----------------------------------*/
+
 #rss{
 	width: calc(100% - 10px);
 	background-color: #E3594B;
-	font-style: italic;
 	font-size: .8em;
 	padding: 5px;
 	margin-bottom: 5px;
@@ -95,11 +104,10 @@ html body {
 
 #close-rss{
 	position: absolute;
-	top: -20px;
-	right: 10px;
-	font-style: normal;
-	/*font-weight: 900;*/
-	color: white;
+	top: -25px;
+	right: 0px;
+	width: 20px;
+	height: 20px;
 	cursor: pointer;
 }
 
@@ -111,23 +119,27 @@ html body {
 }
 
 .link-source {
-	width: calc(8% - 10px);
+	width: calc(8% - 5px);
 	height: calc(100% - 15px);
-	margin: 3.5px 0px 0px 0px;
+	/*margin: 5.5px 0px 0px 0px;*/
 	padding: 10px;
-	font-weight: 900;
+	font-weight: 300;
 	position: relative;
 	float: left;
+	/*font-style: italic;*/
 	text-align: right;
+	font-size: 8pt;
+	text-transform: uppercase;
 }
 
 .link-title {
 	margin: 2.5px;
 	/*border-left: 1px solid white;*/
 	padding: 5px;
-	width: calc(92% - 25px);
+	width: calc(92% - 30px);
 	position: relative;
 	float: right;
+	font-family: "Roboto Slab";
 } 
 
 
@@ -136,6 +148,10 @@ html body {
 	color: #E3594B;
 	cursor: pointer;
 }
+
+/*-----------------------------------*/
+/*			CHART		 			 */
+/*-----------------------------------*/
 
 #chart{
 	width: 320;
@@ -150,11 +166,16 @@ svg path {
 }
 
 svg path:hover{
-	fill: #E3594B;
+	fill: #00D99A;
 }
 
 svg text {
 	pointer-events: none;
+	font-family: Roboto;
+	font-weight: 300;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	font-size: 8pt;
 }
 
 .solidArc{
@@ -167,9 +188,10 @@ svg text {
 	z-index: 1;
 }
 
-/*-----------------------------------
+/*-----------------------------------*/
 /*			USER PROFILE 			 */
 /*-----------------------------------*/
+
 
 #profile{
 	display: none;	

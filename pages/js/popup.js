@@ -14,14 +14,15 @@ function getData() {
             // console.log(category, " ", json[category]['count']);
             data.push({
                 label: category,
-                count: (1/json[category]['count'])      // transform count to show less-read sections
+                count: (json[category]['count'])      // transform count to show less-read sections
             })
         }
 
         // check to see if anything has been read
         if (data.every(isZero)){        
-                $('#logo').hide();      // if nothing is read, show onboarding
-                onboarding();
+            $('#logo').hide();      // if nothing is read, show onboarding
+            $('#go-profile').hide();
+            onboarding();
         } else {        
             initGraph(data);            // otherwise, show graph
             showProfile(profile);
@@ -114,11 +115,12 @@ function showProfile(show){
         $('#chart').hide();
         $('#rss').hide();
         $('#profile').show();
+        // $('#go-profile').show();
         $('#go-profile').attr("src", "img/chart.png");
     } else {
         $('#profile').hide();
         $('#chart').show();
-        $('#go-profile').attr("src", "img/profile.png");
+        $('#go-profile').show().attr("src", "img/profile.png");
     }
 }
 
@@ -126,7 +128,7 @@ function showProfile(show){
 function getRSS(category){
 
     $('#rss').empty();
-    $('#rss').append('<div id="close-rss">[ X ]</div>')
+    $('#rss').append('<img id="close-rss" src="img/close.png">')
 
     switch (category) {             // convert call to site specific rss categories
         case "world":
@@ -236,6 +238,7 @@ function initGraph(json) {
     var arc = d3.svg.arc()
       .outerRadius(function (d, i) { 
         return outerRadius - (d['data']['count']/max); 
+        console.log("radius ", outerRadius)
     });
 
     var color = d3.scale.linear()
@@ -258,10 +261,20 @@ function initGraph(json) {
 
     arcs.append("svg:path")
       // .attr("fill", '#00C189' )
-      .attr("fill", function(d) { return color(d.value) } )
+      // .attr("fill", function(d) { return color(d.value) } )
+      .attr("fill", function(d){
+        console.log(d.data.label, " ", (d.endAngle - d.startAngle))
+        if(d.endAngle - d.startAngle > .24){
+            return "#00C189"
+        } else {
+            return "#E3594B"
+        }
+      })
       .attr("d", arc)
       .on('click', function(d){ getRSS(d.data.label); })
       ;
+
+
 
     arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")
       .attr("dy", ".35em")
