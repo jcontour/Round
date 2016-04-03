@@ -87,7 +87,8 @@ function listen(){      //  event listeners
             slide ++;
             slideChange(slide);
          } else {                               // on last slide, button calls rss for recommendations
-            callRSS([{"site": "nyt", "category": "MostViewed"}, {"site": "bf", "category": "index"}]);
+            callRSS({"site": "nyt", "category": "MostViewed"});
+            callRSS({"site": "bf", "category": "index"});
          }
     })
 
