@@ -65,6 +65,18 @@ function getTime(data, isArticle){
     } 
 }
 
+function checkHabits(data){
+    console.log("checking habits...");
+    var totalRead = data['totalRead'];
+    console.log("total articles read = ", totalRead);
+
+    $.each(obj, function(key, value) {
+        if (key !== 'totalRead'){
+            console.log(key, " ",  key['count']);
+        }
+    });
+}
+
 
 // -------------------------------------------
 //          STORAGE FUNCTIONS
@@ -111,20 +123,23 @@ function saveData(data, timeSpent){
         keywords = keywords.split(",");
 
         // if (data.url in info[category]['read']) {       // if article read already, add timespent to existing log
-        if (info[category]['read'].indexOf(data.url) == -1){
+        if (info['articleInfo'][category]['read'].indexOf(data.url) == -1){
             console.log("article not read")
             console.log("adding to: ", category)
-            info[category]['count'] ++;
-            info[category]['read'].push(data.url);
+            info['articleInfo'][category]['count'] ++;
+            info['articleInfo'][category]['read'].push(data.url);
             // info[category]['timeSpent'] += timeSpent;
             for (var i in keywords) {
-                info[category]['keywords'].push(keywords[i]);
+                info['articleInfo'][category]['keywords'].push(keywords[i]);
             }                    
         } else {                                        // if not read, add it log
             console.log("article read already");
             console.log("adding ", timeSpent, " to log");
-            info[category]['timeSpent'] += timeSpent;    
+            info['articleInfo'][category]['timeSpent'] += timeSpent;
+            info['habitInfo']['totalRead'] ++;
         }
+
+        // checkHabits(info);
         
         // convert back into JSON and save
         var strData = JSON.stringify( info );
@@ -137,72 +152,82 @@ function saveData(data, timeSpent){
 
 function initStorage(){
     var info = {
-        "world": {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
+        articleInfo : {
+            "world": {
+                count: 1,
+                read: [],
+                keywords: [],
+                timeSpent: 0
+            },
+            "usa": {
+                count: 1,
+                read: [],
+                keywords: [],
+                timeSpent: 0
+            },
+            "politics": {
+                count: 1,
+                read: [],
+                keywords: [],
+                timeSpent: 0
+            },
+            "business": {
+                count: 1,
+                read: [],
+                keywords: [],
+                timeSpent: 0
+            },
+            "tech" : {
+                count: 1,
+                read: [],
+                keywords: [],
+                timeSpent: 0
+            },
+            "science" : {
+                count: 1,
+                read: [],
+                keywords: [],
+                timeSpent: 0
+            },
+            "health" : {
+                count: 1,
+                read: [],
+                keywords: [],
+                timeSpent: 0
+            },
+            "opinion": {
+                count: 1,
+                read: [],
+                keywords: [],
+                timeSpent: 0
+            },
+            "sports" : {
+                count: 1,
+                read: [],
+                keywords: [],
+                timeSpent: 0
+            },
+            "culture" : {
+                count: 1,
+                read: [],
+                keywords: [],
+                timeSpent: 0,
+                subCategories : {}
+            },
+            "other" : {
+                count: 0,
+                read: [],
+                keywords: [],
+                timeSpent: 0,
+                subCategories : {}
+            }
         },
-        "usa": {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
-        },
-        "politics": {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
-        },
-        "business": {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
-        },
-        "tech" : {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
-        },
-        "science" : {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
-        },
-        "health" : {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
-        },
-        "opinion": {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
-        },
-        "sports" : {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
-        },
-        "culture" : {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
-        },
-        "other" : {
-            count: 1,
-            read: [],
-            keywords: [],
-            timeSpent: 0
-        }, 
+        habitInfo: {
+            totalRead : 0,
+            readPerDay : {
+
+            }
+        }
     }
 
     var data = JSON.stringify( info );

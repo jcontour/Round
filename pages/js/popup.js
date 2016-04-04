@@ -5,17 +5,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function getData() {
     chrome.storage.sync.get("data", function (result) {
-        var json = JSON.parse( result.data );           // parse data
+        var parsed = JSON.parse( result.data );
+
+        var articleInfo = parsed.articleInfo;
+        // var habitInfo = parsed.habitInfo;
 
         var data = []
         console.log("init graph");
 
-        for (var category in json) {                    // load data into array
-            // console.log(category, " ", json[category]['count']);
+        for (var category in articleInfo) {                    // load data into array
+            // console.log(category, " ", articleInfo[category]['count']);
             data.push({
                 label: category,
-                count: (json[category]['count'])      // transform count to show less-read sections
+                count: (articleInfo[category]['count'])      // transform count to show less-read sections
             })
+
+            console.log ("data ", data)
         }
 
         // check to see if anything has been read
@@ -32,8 +37,13 @@ function getData() {
 }
 
 function isZero(value, index, ar){      // checking count values
-    if (value.count == 1 || value.count == "Infinity"){
+    console.log(value.label, " ", value.count);
+    if (value.label != "other" && value.count == 1){
         return true;
+    } else if (value.label == "other" && value.count == 0) {
+        return true;
+    } else if (value.label == "other" && value.count > 0) {
+        return false;
     } else {
         return false;
     }
@@ -128,7 +138,7 @@ function showProfile(show){
 function getRSS(category){
 
     $('#rss').empty();
-    $('#rss').append('<img id="close-rss" src="img/close.png">')
+    $('#rss').append('<div id="close-rss"></div>')
 
     switch (category) {             // convert call to site specific rss categories
         case "world":
@@ -216,6 +226,7 @@ function callRSS (call) {
 }
 
 function initGraph(json) {
+
     $('#chart').empty;
 
     var dataSet = json;
@@ -263,7 +274,7 @@ function initGraph(json) {
       // .attr("fill", '#00C189' )
       // .attr("fill", function(d) { return color(d.value) } )
       .attr("fill", function(d){
-        console.log(d.data.label, " ", (d.endAngle - d.startAngle))
+        // console.log(d.data.label, " ", (d.endAngle - d.startAngle))
         if(d.endAngle - d.startAngle > .24){
             return "#00C189"
         } else {
@@ -273,8 +284,6 @@ function initGraph(json) {
       .attr("d", arc)
       .on('click', function(d){ getRSS(d.data.label); })
       ;
-
-
 
     arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")
       .attr("dy", ".35em")
