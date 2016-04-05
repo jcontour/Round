@@ -171,9 +171,9 @@ svg path {
 	cursor: pointer;
 }
 
-svg path:hover{
+/*svg path:hover{
 	fill: #00D99A;
-}
+}*/
 
 svg text {
 	pointer-events: none;

@@ -297,6 +297,19 @@ function initGraph(json) {
       .text(function(d) { return d.data.label; })
       ;
 
+    arcs.on('mouseover', function(){
+        d3.select(this)
+          .select("text")
+          .style("fill", "black")
+          .attr("stroke", "black");
+      })
+      .on('mouseout', function(){
+        d3.select(this)
+          .select("text")
+          .style("fill", "white")
+          .attr("stroke", "none");
+      });
+
     // Computes the angle of an arc, converting from radians to degrees.
     function angle(d) {
       var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
