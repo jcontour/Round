@@ -27,6 +27,7 @@ function getData() {
         if (data.every(isZero)){        
             $('#logo').hide();      // if nothing is read, show onboarding
             $('#go-profile').hide();
+            $('#go-help').hide();
             onboarding();
         } else {        
             initGraph(data);            // otherwise, show graph
@@ -71,16 +72,12 @@ function slideChange(slide){    // change onboarding slides on click
             $('#onboarding').css("background-image", "url(img/onboarding02.png)");
             $('#onboard-text').html('<p>Round works in the background, taking notes when you read the news.</p>');
             break;
-        case 3: 
-            $('#onboarding').css("background-position", "center center");
-            $('#onboarding').css("background-image", "url(img/onboarding03.png)");
-            $('#onboard-text').html('<p>If Round notices that you haven\'t seen something important, it\'ll let you know!</p>');
+        case 3:
+            $('#onboarding').css("background-position", "50% 50%"); 
+            $('#onboarding').css("background-image", "url(img/onboarding04.png)");
+            $('#onboard-text').html('<p>The popup displays your reading habits, and highlights the areas you might have missed.</p> <p>If you need some help catching up, click on the slice for the latest articles.</p>');
             break;
         case 4: 
-            $('#onboarding').css("background-image", "url(img/onboarding04.png)");
-            $('#onboard-text').html('<p>Your reading profile prioritises the topic areas that you might have overlooked</p><p>If you need some help catching up, click on a topic for the latest articles.</p>');
-            break;
-        case 5: 
             $('#onboarding').css("background-image", "url(img/onboarding05.png)");
             $('#slide-up').text("Help me out here!").css("font-style", "italic");
             $('#onboard-text').html('<p>Let\'s get started!</p> <p>Read articles as you would normally, or start with some suggestions.</p>');
@@ -90,11 +87,12 @@ function slideChange(slide){    // change onboarding slides on click
 
 var slide = 1;
 var profile = false;
+var help = false;
 
 function listen(){      //  event listeners
 
     $('#slide-up').on('click', function(){      // change slide button
-        if (slide < 5) {                        // going through 5 slides
+        if (slide < 4) {                        // going through 5 slides
             slide ++;
             slideChange(slide);
          } else {                               // on last slide, button calls rss for recommendations
@@ -118,6 +116,12 @@ function listen(){      //  event listeners
         profile = !profile;
         showProfile(profile);
     });
+
+    $('#go-help').off('click').on('click', function(){
+        console.log("help")
+        help = !help;
+        showHelp(help);
+    });
 }
 
 function showProfile(show){
@@ -131,6 +135,20 @@ function showProfile(show){
         $('#profile').hide();
         $('#chart').show();
         $('#go-profile').show().attr("src", "img/profile.png");
+    }
+}
+
+function showHelp(show){
+    if (show == true) {
+        $('#chart').hide();
+        $('#rss').hide();
+        $('#help').show();
+        // $('#go-profile').show();
+        $('#go-help').attr("src", "img/chart.png");
+    } else {
+        $('#help').hide();
+        $('#chart').show();
+        $('#go-help').show().attr("src", "img/help.png");
     }
 }
 

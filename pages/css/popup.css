@@ -16,10 +16,10 @@ html body {
 	background-color: #0C152E;
 }
 
-#logo{
+#go-help{
 	margin-left: 0;
-	width: 35px;
-	height: 35px;
+	width: 40px;
+	height: 40px;
 	position: absolute;
 	top: 15px;
 	left: 15px;
@@ -43,7 +43,7 @@ html body {
 	width: 100%;
 	height: 200px;
 	background-repeat: no-repeat;
-	background-position: center;
+	background-position: 50% 50%;
 	background-size: contain;
 	position: relative;
 	top: -10px;
@@ -51,11 +51,11 @@ html body {
 }
 
 #onboard-text{
-	width: calc(100% - 50px);
+	width: calc(100% - 20px);
 	color: white;
 	font-size: .8em;
 	text-align: center;
-	padding: 0 25px 0 25px;
+	padding: 0 10px 0 10px;
 	position: relative;
 	top: -10px;
 }
@@ -195,11 +195,19 @@ svg text {
 }
 
 /*-----------------------------------*/
-/*			USER PROFILE 			 */
+/*			SECTIONS     			 */
 /*-----------------------------------*/
 
 
 #profile{
+	
+}
+
+#help{
+
+}
+
+.section {
 	display: none;	
 	width: 320;
 	height: 320;

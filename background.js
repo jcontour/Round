@@ -65,16 +65,76 @@ function getTime(data, isArticle){
     } 
 }
 
-function checkHabits(data){
-    console.log("checking habits...");
-    var totalRead = data['totalRead'];
-    console.log("total articles read = ", totalRead);
 
-    $.each(obj, function(key, value) {
-        if (key !== 'totalRead'){
-            console.log(key, " ",  key['count']);
+// -------------------------------------------
+//          HABIT FUNCTIONS
+// -------------------------------------------
+
+
+function parseHabits(info, numRead){                 // function to check reading habits, is user good or need to be reminded of topic?
+    console.log("checking habits...");
+    console.log(numRead, " articles read");
+        
+    var interval = 2;
+
+    console.log("modulo ", (numRead % interval));
+    
+
+    if (numRead % interval == 0){                                   // check every ten articles
+        // console.log()
+        var rounded = []
+        var over = []
+        var under = []
+
+        for (var category in info['articleInfo']) {                    // load data into array
+            if (category != "other"){
+                if (((info['articleInfo'][category]['count'] - 1)/totalRead)*100 >= 7 && ((info['articleInfo'][category]['count'] - 1)/totalRead)*100 <= 17) {
+                    rounded.push({
+                        label: category,
+                        percentage: (((info['articleInfo'][category]['count'] - 1)/totalRead)*100)
+                    })
+                } else if (((info['articleInfo'][category]['count'] - 1)/totalRead)*100 > 17){
+                    over.push({
+                        label: category,
+                        percentage: (((info['articleInfo'][category]['count'] - 1)/totalRead)*100)
+                    })
+                } else if (((info['articleInfo'][category]['count'] - 1)/totalRead)*100 < 7){
+                    under.push({
+                        label: category,
+                        percentage: (((info['articleInfo'][category]['count'] - 1)/totalRead)*100)
+                    })
+                }
+            }
         }
-    });
+
+        console.log("rounded ", rounded)
+        console.log("over ", over)
+        console.log("under ", under);
+
+        checkHabits(rounded, over, under);
+    }
+}
+
+function checkHabits(round, over, under){
+    
+}
+
+function changeIcon(icon){
+    console.log("changing icon");
+
+    switch (icon) {
+        case "normal":
+            chrome.browserAction.setIcon({path:"images/icon_38.png"});
+        break;
+        case "neg":
+            chrome.browserAction.setIcon({path:"images/icon_neg_38.png"});
+        break;
+        case "pos":
+            chrome.browserAction.setIcon({path:"images/icon_pos_38.png"});
+        break;
+    default:
+       chrome.browserAction.setIcon({path:"images/icon_38.png"});
+    }
 }
 
 
@@ -90,6 +150,8 @@ function getData(callback){
     });
 }
 
+var totalRead = 0;
+
 function saveData(data, timeSpent){
     // metadata formatted as: headline, category, keywords, url
 
@@ -98,6 +160,8 @@ function saveData(data, timeSpent){
         // take a string retreived from storage
         // parse back into a javascript OBJECT
         var info = JSON.parse( result.data );
+
+        // var totalRead = info['habitInfo']['totalRead'];
 
         // category of article
         var category = data.category.toLowerCase();
@@ -124,27 +188,27 @@ function saveData(data, timeSpent){
 
         // if (data.url in info[category]['read']) {       // if article read already, add timespent to existing log
         if (info['articleInfo'][category]['read'].indexOf(data.url) == -1){
-            console.log("article not read")
+            console.log("article not read ")
             console.log("adding to: ", category)
             info['articleInfo'][category]['count'] ++;
             info['articleInfo'][category]['read'].push(data.url);
             // info[category]['timeSpent'] += timeSpent;
             for (var i in keywords) {
                 info['articleInfo'][category]['keywords'].push(keywords[i]);
-            }                    
+            }
+            totalRead ++;                    
         } else {                                        // if not read, add it log
-            console.log("article read already");
+            console.log("article read ");
             console.log("adding ", timeSpent, " to log");
             info['articleInfo'][category]['timeSpent'] += timeSpent;
-            info['habitInfo']['totalRead'] ++;
         }
 
-        // checkHabits(info);
+        parseHabits(info, totalRead);
         
         // convert back into JSON and save
         var strData = JSON.stringify( info );
         chrome.storage.sync.set({"data": strData}, function() { 
-            console.log("saved data", strData);
+            // console.log("saved data", strData);
         });
     });
 }
@@ -223,7 +287,7 @@ function initStorage(){
             }
         },
         habitInfo: {
-            totalRead : 0,
+            // totalRead : 0,
             readPerDay : {
 
             }
@@ -233,7 +297,7 @@ function initStorage(){
     var data = JSON.stringify( info );
 
     chrome.storage.sync.set({"data": data}, function() { 
-        console.log("saved ", data); 
+        // console.log("saved ", data); 
     });
 }
 
