@@ -23,6 +23,13 @@ chrome.runtime.onMessage.addListener(
                 });
                 return true;
             break;
+            case "popup-open":
+                sendResponse(showOnboarding);
+                showOnboarding = false;
+            break;
+            case "reset-icon":
+                changeIcon("normal");
+            break;
         default:
             // for debugging
             alert("BG.JS MESSAGE OOPS");
@@ -35,6 +42,8 @@ chrome.runtime.onMessage.addListener(
 // -------------------------------------------
 //          OTHER FUNCTIONS
 // -------------------------------------------
+
+var showOnboarding = true;
 
 var currArticleState = false;
 var prevArticleState = false;
@@ -66,21 +75,26 @@ function getTime(data, isArticle){
 }
 
 
+function getRandom(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // -------------------------------------------
 //          HABIT FUNCTIONS
 // -------------------------------------------
 
+var feedback = 0;
 
 function parseHabits(info, numRead){                 // function to check reading habits, is user good or need to be reminded of topic?
     console.log("checking habits...");
     console.log(numRead, " articles read");
         
-    var interval = 2;
+    // var interval = 2;
 
-    console.log("modulo ", (numRead % interval));
+    // console.log("modulo ", (numRead % interval));
     
 
-    if (numRead % interval == 0){                                   // check every ten articles
+    // if (numRead % interval == 0){                                   // check every ten articles
         // console.log()
         var rounded = []
         var over = []
@@ -111,12 +125,35 @@ function parseHabits(info, numRead){                 // function to check readin
         console.log("over ", over)
         console.log("under ", under);
 
-        checkHabits(rounded, over, under);
-    }
-}
+        if (rounded.length >= 6) {
+            changeIcon("pos");
+            console.log("you're doing great")
+            feedback = 1;
+        } 
 
-function checkHabits(round, over, under){
-    
+        else if (under.length >= 4) {
+            changeIcon("neg");
+            console.log("you're missing out on ", under[getRandom(0, under.length)].label);
+            feedback = 2;
+
+        }
+
+        else if (over.length >= 3){
+            changeIcon("normal");
+            console.log("you are super caught up on ", over[getRandom(0, under.length)].label, "!")
+            if (under.length > 0){
+                console.log("Why don't you read some ", under[getRandom(0, under.length)].label, "?");
+            }
+            feedback = 0;
+        }
+
+        else {
+            changeIcon("normal");
+            feedback = 0;
+        }
+
+        return {rounded: rounded, over: over, under: under, feedback: feedback}
+    // }
 }
 
 function changeIcon(icon){
@@ -171,7 +208,7 @@ function saveData(data, timeSpent){
         var categories = ["world", "usa", "politics", "business", "tech", "science", "health", "opinion", "sports", "culture"];
         if (category == "us" || category == "usnews" ){
             category = "usa";
-        } else if ( category ==  "books" || category == "uk" || category == "movies" || category == "music" || category == "arts" || category == "style" || category == "lgbt" || category == "community" || category == "food") {
+        } else if ( category ==  "books" || category == "tvandmovies" || category == "uk" || category == "movies" || category == "music" || category == "arts" || category == "style" || category == "lgbt" || category == "community" || category == "food") {
             category = "culture";
         } else if (category == "technology") {
             category = "tech";
@@ -203,7 +240,10 @@ function saveData(data, timeSpent){
             info['articleInfo'][category]['timeSpent'] += timeSpent;
         }
 
-        parseHabits(info, totalRead);
+        var habits = parseHabits(info, totalRead);
+        console.log("habit data ", habits);
+        info['habitInfo']['feedback'] = habits;
+        info['habitInfo']['totalRead'] = totalRead; 
         
         // convert back into JSON and save
         var strData = JSON.stringify( info );
@@ -287,7 +327,8 @@ function initStorage(){
             }
         },
         habitInfo: {
-            // totalRead : 0,
+            totalRead : 0,
+            feedback : {},
             readPerDay : {
 
             }

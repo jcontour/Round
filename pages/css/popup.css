@@ -214,3 +214,83 @@ svg text {
 	padding: 10px;
 	margin-top: 50px;
 }
+
+/*-----------------------------------*/
+/*			FEEDBACK     			 */
+/*-----------------------------------*/
+
+#feedback-wrapper{
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 340px;
+	height: 340px;
+	background-color: rgba(0,0,0,0.5)
+}
+
+#feedback{
+	position: fixed;
+	top: 100px;
+	left: 70px;
+	width: 200px;
+	height: 150px;
+	background-color: white;
+	border-radius: 5px;
+}
+
+/*#close-feedback{
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 20px;
+	height: 20px;
+	background-image: url("../img/close.png");
+	background-size: cover;
+	cursor: pointer;
+}*/
+
+#close-feedback:hover{
+	background-image: url("../img/close_hover.png");
+}
+
+#feedback-text{
+	margin: 40px 20px 5px 20px;
+	font-weight: 300;
+	text-align: center;
+	font-size: 1em;
+	color: #0C152E;
+}
+
+#category-rec{
+	font-weight: 700;
+	font-size: 1em;
+	font-style: bold;
+	text-align: center;
+	color: #E3594B;
+	padding: 5px;
+	text-transform: uppercase;
+}
+
+#ok {
+	background-color: #00C189;
+	color: white;
+	font-family: "Roboto Slab";
+	/*font-style: bold;*/
+	text-align: center;
+	width: 50px;
+	height: 30px;
+	margin-left: 70px;
+	margin-top: 15px;
+	height: 20px;
+	padding: 5px;
+	cursor: pointer;
+}
+
+#ok:hover{
+	background-color: #0C152E;
+	/*border: 2px solid #00C189;*/
+	/*color: #00C189;*/
+	/*width: 46px;*/
+	/*height: 26px;*/
+	/*margin-left: 68px;*/
+}

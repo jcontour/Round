@@ -1,40 +1,44 @@
 document.addEventListener('DOMContentLoaded', function () {
 	console.log("popup-loaded");
-    getData();
+    chrome.runtime.sendMessage({directive: "popup-open"}, function(response) {
+        getData(response);
+    });
 });
 
-function getData() {
-    chrome.storage.sync.get("data", function (result) {
-        var parsed = JSON.parse( result.data );
+function getData(doShowOnboarding) {
 
-        var articleInfo = parsed.articleInfo;
-        // var habitInfo = parsed.habitInfo;
+    if (doShowOnboarding) {
+        $('#logo').hide();
+        $('#go-profile').hide();
+        $('#go-help').hide();
+        onboarding();
+    } else {
+        chrome.storage.sync.get("data", function (result) {
+            var parsed = JSON.parse( result.data );
 
-        var data = []
-        console.log("init graph");
+            var articleInfo = parsed.articleInfo;
+            var habitInfo = parsed.habitInfo;
 
-        for (var category in articleInfo) {                    // load data into array
-            // console.log(category, " ", articleInfo[category]['count']);
-            data.push({
-                label: category,
-                count: (articleInfo[category]['count'])      // transform count to show less-read sections
-            })
+            console.log("habitinfo ", habitInfo);
 
-            console.log ("data ", data)
-        }
+            var data = []
+            console.log("init graph");
 
-        // check to see if anything has been read
-        if (data.every(isZero)){        
-            $('#logo').hide();      // if nothing is read, show onboarding
-            $('#go-profile').hide();
-            $('#go-help').hide();
-            onboarding();
-        } else {        
+            for (var category in articleInfo) {                    // load data into array
+                // console.log(category, " ", articleInfo[category]['count']);
+                data.push({
+                    label: category,
+                    count: (articleInfo[category]['count'])      // transform count to show less-read sections
+                })
+                console.log ("data ", data)
+            }
             initGraph(data);            // otherwise, show graph
             showProfile(profile);
+            showFeedback(habitInfo);
             listen();
-        }
-    });
+        });
+
+    }
 }
 
 function isZero(value, index, ar){      // checking count values
@@ -122,18 +126,24 @@ function listen(){      //  event listeners
         help = !help;
         showHelp(help);
     });
+
+    $('#ok').off('click').on('click', function(){     // close rss box
+        $('#feedback-wrapper').fadeOut();
+        chrome.runtime.sendMessage({directive: "reset-icon"});
+    });
 }
 
 function showProfile(show){
     if (show == true) {
         $('#chart').hide();
         $('#rss').hide();
+        $('#go-help').hide();
         $('#profile').show();
-        // $('#go-profile').show();
         $('#go-profile').attr("src", "img/chart.png");
     } else {
         $('#profile').hide();
         $('#chart').show();
+        $('#go-help').show();
         $('#go-profile').show().attr("src", "img/profile.png");
     }
 }
@@ -142,13 +152,43 @@ function showHelp(show){
     if (show == true) {
         $('#chart').hide();
         $('#rss').hide();
+        $('#go-profile').hide();
         $('#help').show();
         // $('#go-profile').show();
         $('#go-help').attr("src", "img/chart.png");
     } else {
         $('#help').hide();
         $('#chart').show();
+        $('#go-profile').show();
         $('#go-help').show().attr("src", "img/help.png");
+    }
+}
+
+function getRandom(min, max) {
+    var num = Math.floor(Math.random() * (max));
+    console.log("random num ", num);
+    return num;
+}
+
+function showFeedback(habitInfo){
+    console.log("feedback showing ", habitInfo.feedback.feedback);
+    switch (habitInfo.feedback.feedback) {
+        case 0:
+            // do nothing
+        break;
+        case 1:
+            console.log("feedback : ", habitInfo.feedback.feedback);
+            $('#feedback-wrapper').show();
+            $('#feedback-text').text("You\'re doing great!")
+            listen();
+        break;
+        case 2:
+            console.log("feedback : ", habitInfo.feedback.feedback);
+            $('#feedback-wrapper').show();
+            $('#feedback-text').text("You could catch up on")
+            $('#category-rec').text(habitInfo.feedback.under[getRandom(0, habitInfo.feedback.under.length)].label)
+            listen();
+        break;
     }
 }
 
