@@ -89,13 +89,10 @@ function parseHabits(info, numRead){                 // function to check readin
     console.log("checking habits...");
     console.log(numRead, " articles read");
         
-    // var interval = 2;
+    var interval = 10;
 
-    // console.log("modulo ", (numRead % interval));
-    
-
-    // if (numRead % interval == 0){                                   // check every ten articles
-        // console.log()
+    if (numRead % interval == 0){  // check every ten articles
+        
         var rounded = []
         var over = []
         var under = []
@@ -153,7 +150,7 @@ function parseHabits(info, numRead){                 // function to check readin
         }
 
         return {rounded: rounded, over: over, under: under, feedback: feedback}
-    // }
+    }
 }
 
 function changeIcon(icon){
@@ -173,7 +170,6 @@ function changeIcon(icon){
        chrome.browserAction.setIcon({path:"images/icon_38.png"});
     }
 }
-
 
 // -------------------------------------------
 //          STORAGE FUNCTIONS
@@ -225,7 +221,7 @@ function saveData(data, timeSpent){
 
         // if (data.url in info[category]['read']) {       // if article read already, add timespent to existing log
         if (info['articleInfo'][category]['read'].indexOf(data.url) == -1){
-            console.log("article not read ")
+            // console.log("article not read ")
             console.log("adding to: ", category)
             info['articleInfo'][category]['count'] ++;
             info['articleInfo'][category]['read'].push(data.url);
@@ -235,7 +231,7 @@ function saveData(data, timeSpent){
             }
             totalRead ++;                    
         } else {                                        // if not read, add it log
-            console.log("article read ");
+            // console.log("article read ");
             console.log("adding ", timeSpent, " to log");
             info['articleInfo'][category]['timeSpent'] += timeSpent;
         }
@@ -243,8 +239,20 @@ function saveData(data, timeSpent){
         var habits = parseHabits(info, totalRead);
         console.log("habit data ", habits);
         info['habitInfo']['feedback'] = habits;
-        info['habitInfo']['totalRead'] = totalRead; 
+        info['habitInfo']['totalRead'] = totalRead;
+
+        var today = new Date;
+        var date = today.getFullYear() + " " + today.getMonth() + " " + today.getDate();
+        console.log('today ', date);
+
+        if (info['habitInfo']['readPerDay'].hasOwnProperty(date)){
+            info['habitInfo']['readPerDay'][date] ++;
+        } else {
+            info['habitInfo']['readPerDay'][date] = 1;
+        }
         
+        console.log("habit info being saved ", info['habitInfo']);
+
         // convert back into JSON and save
         var strData = JSON.stringify( info );
         chrome.storage.sync.set({"data": strData}, function() { 
@@ -330,7 +338,10 @@ function initStorage(){
             totalRead : 0,
             feedback : {},
             readPerDay : {
-
+                "2016 3 8" : 2,
+                "2016 3 9" : 6,
+                "2016 3 10" : 4,
+                "2016 3 11" : 7,
             }
         }
     }

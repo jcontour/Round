@@ -32,7 +32,8 @@ function getData(doShowOnboarding) {
                 })
                 console.log ("data ", data)
             }
-            initGraph(data);            // otherwise, show graph
+            initPieChart(data);            // otherwise, show graph
+            initBarChart(habitInfo['readPerDay']);
             showProfile(profile);
             showFeedback(habitInfo);
             listen();
@@ -172,23 +173,26 @@ function getRandom(min, max) {
 
 function showFeedback(habitInfo){
     console.log("feedback showing ", habitInfo.feedback.feedback);
-    switch (habitInfo.feedback.feedback) {
-        case 0:
-            // do nothing
-        break;
-        case 1:
-            console.log("feedback : ", habitInfo.feedback.feedback);
-            $('#feedback-wrapper').show();
-            $('#feedback-text').text("You\'re doing great!")
-            listen();
-        break;
-        case 2:
-            console.log("feedback : ", habitInfo.feedback.feedback);
-            $('#feedback-wrapper').show();
-            $('#feedback-text').text("You could catch up on")
-            $('#category-rec').text(habitInfo.feedback.under[getRandom(0, habitInfo.feedback.under.length)].label)
-            listen();
-        break;
+
+    if (habitInfo.totalRead > 3) {
+        switch (habitInfo.feedback.feedback) {
+            case 0:
+                // do nothing
+            break;
+            case 1:
+                console.log("feedback : ", habitInfo.feedback.feedback);
+                $('#feedback-text').text("You\'re doing great!")
+                $('#feedback-wrapper').show();
+                listen();
+            break;
+            case 2:
+                console.log("feedback : ", habitInfo.feedback.feedback);
+                $('#feedback-text').text("You could catch up on")
+                $('#category-rec').text(habitInfo.feedback.under[getRandom(0, habitInfo.feedback.under.length)].label)
+                $('#feedback-wrapper').show();
+                listen();
+            break;
+        }
     }
 }
 
@@ -283,7 +287,7 @@ function callRSS (call) {
     });
 }
 
-function initGraph(json) {
+function initPieChart(json) {
 
     $('#chart').empty;
 
@@ -375,3 +379,6 @@ function initGraph(json) {
     }      
 }
 
+function initBarChart(data){
+
+}
