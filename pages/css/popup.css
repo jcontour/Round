@@ -23,6 +23,7 @@ html body {
 	position: absolute;
 	top: 15px;
 	left: 15px;
+	cursor: pointer;
 }
 
 #go-profile {
@@ -195,13 +196,43 @@ svg text {
 }
 
 /*-----------------------------------*/
-/*			SECTIONS     			 */
+/*			PROFILE     			 */
 /*-----------------------------------*/
 
 
 #profile{
-	
+	/*width: calc(100% - 20px);*/
+	/*height: calc(100% - 20px);*/
 }
+
+#per-day-chart {
+	/*width: 100%;*/
+	height: 100px;
+	position: absolute;
+	bottom: 30px;
+}
+
+.per-day-line{
+	fill: none;
+	stroke: #fff;
+	stroke-width: 2;
+}
+
+.bar{
+	/*shape-rendering: crispEdges;*/
+	fill: #00C189;
+	/*stroke-width: 2;*/
+}
+
+.axis {
+	stroke: #fff;
+	stroke-width: 1;
+}
+
+/*-----------------------------------*/
+/*			HELP	     			 */
+/*-----------------------------------*/
+
 
 #help{
 
@@ -209,10 +240,13 @@ svg text {
 
 .section {
 	display: none;	
-	width: 320;
-	height: 320;
+	width: 320px;
+	height: 260px;
 	padding: 10px;
-	margin-top: 50px;
+	/*margin-top: 50px;*/
+	position: absolute;
+	top: 60px;
+	left: 0;
 }
 
 /*-----------------------------------*/
@@ -225,7 +259,8 @@ svg text {
 	right: 0;
 	width: 340px;
 	height: 340px;
-	background-color: rgba(0,0,0,0.5)
+	background-color: rgba(0,0,0,0.5);
+	display: none;
 }
 
 #feedback{

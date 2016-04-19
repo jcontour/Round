@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// --------------------------------------------------------------------------------------
+//          INIT
+// --------------------------------------------------------------------------------------
+
 function getData(doShowOnboarding) {
 
     if (doShowOnboarding) {
@@ -30,10 +34,20 @@ function getData(doShowOnboarding) {
                     label: category,
                     count: (articleInfo[category]['count'])      // transform count to show less-read sections
                 })
-                console.log ("data ", data)
+                // console.log ("data ", data)
             }
             initPieChart(data);            // otherwise, show graph
-            initBarChart(habitInfo['readPerDay']);
+
+            // var barChartData = []
+            // for (date in habitInfo['readPerDay']){
+            //     barChartData.push({topic: date : date, count: habitInfo['readPerDay'][date]});
+            // }
+
+            // initBarChart(barChartData);
+
+            // var myChart = new Chart();
+            // myChart.setup(barChartData);
+
             showProfile(profile);
             showFeedback(habitInfo);
             listen();
@@ -54,6 +68,10 @@ function isZero(value, index, ar){      // checking count values
         return false;
     }
 }
+
+// --------------------------------------------------------------------------------------
+//          ONBOARDING STUFF
+// --------------------------------------------------------------------------------------
 
 function onboarding(){          // init onboarding
 
@@ -89,6 +107,11 @@ function slideChange(slide){    // change onboarding slides on click
             break;
     }
 }
+
+
+// --------------------------------------------------------------------------------------
+//          LISTENERS
+// --------------------------------------------------------------------------------------
 
 var slide = 1;
 var profile = false;
@@ -146,6 +169,7 @@ function showProfile(show){
         $('#chart').show();
         $('#go-help').show();
         $('#go-profile').show().attr("src", "img/profile.png");
+        listen();
     }
 }
 
@@ -162,8 +186,13 @@ function showHelp(show){
         $('#chart').show();
         $('#go-profile').show();
         $('#go-help').show().attr("src", "img/help.png");
+        listen();
     }
 }
+
+// --------------------------------------------------------------------------------------
+//         FEEDBACK STUFF
+// --------------------------------------------------------------------------------------
 
 function getRandom(min, max) {
     var num = Math.floor(Math.random() * (max));
@@ -253,6 +282,10 @@ function getRSS(category){
 
 };
 
+// --------------------------------------------------------------------------------------
+//          RSS FUNCTIONS
+// --------------------------------------------------------------------------------------
+
 function callRSS (call) {
 
     var rssItems = []
@@ -286,6 +319,10 @@ function callRSS (call) {
         }   
     });
 }
+
+// --------------------------------------------------------------------------------------
+//          PIE CHART
+// --------------------------------------------------------------------------------------
 
 function initPieChart(json) {
 
@@ -380,5 +417,239 @@ function initPieChart(json) {
 }
 
 function initBarChart(data){
+    console.log("bar chart data ", data);
 
+    // Set the dimensions of the canvas / graph
+    var margin = {top: 10, right: 10, bottom: 10, left: 10},
+        width = 320 - margin.left - margin.right,
+        height = 120 - margin.top - margin.bottom;
+ 
+    var parseDate = d3.time.format("%Y %m %d").parse;
+     
+    // var x = d3.time.scale().range([0, width]);
+    // var y = d3.scale.linear().range([height, 0]);
+
+    var x = d3.scale.ordinal()
+        // .range([0, width]);
+        .rangeRoundBands([0, width], .1);
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+     
+    // Define the axes
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom")
+        // .ticks(5)
+        ;
+     
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        // .ticks(10, "%");
+        // .ticks(5)
+        ;
+     
+    // Define the line
+    // var valueline = d3.svg.line()
+    //     .x(function(d) { return x(d.date); })
+    //     .y(function(d) { return y(d.count); });
+    
+    // Adds the svg canvas
+    var svg = d3.select("#per-day-chart")
+        .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // Get the data
+        data.forEach(function(d) {
+            d.date = parseDate(d.date);
+            d.count = +d.count;
+        });
+     
+        // Scale the range of the data
+        x.domain(data.map(function(d) { return d.date; }));
+        y.domain([0, d3.max(data, function(d) { return d.count; })]);
+     
+        // append the bars
+        svg.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.date); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d.count); })
+            .attr("height", function(d) { return height - y(d.count); });
+     
+        // Add the X Axis
+        svg.append("g")     
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            ;
+     
+        // // Add the Y Axis
+        svg.append("g")     
+            .attr("class", "y axis")
+            .call(yAxis)
+            ;
+}
+
+// --------------------------------------------------------------------------------------
+//          LINE GRAPH
+// --------------------------------------------------------------------------------------
+
+var topics = [politics, world, usa, sports];
+
+var data = [];
+
+for (var i = 0; i < topics.length; i ++){
+  data.push(topics[i]);
+}
+
+var Chart = function(){
+
+  var obj = {};
+
+  var margin = { top: 20, right: 80, bottom: 30, left: 50 };
+  var width = window.innerWidth - margin.left - margin.right;
+  var height = window.innerHeight - margin.top - margin.bottom;
+  var tip = d3.tip()
+      .attr('class', 'd3-tip')
+      .offset([-10, 0])
+      .html(function(d) {
+          return d.topic;
+      })
+      ;                 
+  var svg, chart;
+  var xScale, yScale;
+  var xAxis, yAxis;
+  var x, y;
+  // var color;
+
+  obj.setup = function(dataset){
+    svg = d3.select("#chart").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      // .call(xAxis);
+
+    svg.append("g")
+        .attr("class", "y axis")
+        // .call(yAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        // .style("text-anchor", "end")
+        // .text("Temperature (ºF)")
+        ;
+
+    obj.update(dataset);
+  }
+
+  // obj.updateData = function(dataset){
+  //   obj.update(dataset);
+  // }
+
+  obj.update = function(dataset){
+    var parseDate = d3.time.format("%Y %m %d").parse;
+    dataset.forEach(function (kv) {
+      kv.counts.forEach(function (d) {
+        d.date = parseDate(d.date);
+      });
+    });
+
+    var minX = d3.min(data, function (kv) { return d3.min(kv.counts, function (d) { return d.date; }) });
+    var maxX = d3.max(data, function (kv) { return d3.max(kv.counts, function (d) { return d.date; }) });
+    var minY = d3.min(data, function (kv) { return d3.min(kv.counts, function (d) { return d.count; }) });
+    var maxY = d3.max(data, function (kv) { return d3.max(kv.counts, function (d) { return d.count; }) });  
+
+    var color = d3.scale.category10();
+    color.domain(data.map(function (d) { return d.topic; }));
+
+    xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
+
+    yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left");
+
+    x = d3.time.scale()
+      .range([0, width])
+      .domain([minX, maxX]);
+
+    y = d3.scale.linear()
+      .range([height, 0])
+      .domain([minY, maxY]);
+
+    var line = d3.svg.line()
+      .interpolate("cardinal")
+      .x(function (d) {
+      return x(d.date);
+    })
+      .y(function (d) {
+      return y(d.count);
+    });
+
+    var topic = svg.selectAll(".topic")
+      .data(data);
+
+    var topicEnter = topic.enter()
+      .append("g")
+      .attr("class", "topic")
+      // .attr("id", function(d){ return d.topic + "line"; })
+      ;
+
+    topicEnter.append("path")
+      .attr("class", "line")
+      .attr("d", function (d) {
+      return line(d.counts);
+    })
+      .style("stroke", function (d) {
+      return color(d.topic);
+    });
+
+    topicEnter.append("text")
+      .datum(function (d) {
+      return {
+        name: d.topic,
+        date: d.counts[d.counts.length - 1].date,
+        value: d.counts[d.counts.length - 1].count
+        };
+      })
+      .attr("transform", function (d) {
+        return "translate(" + x(d.date) + "," + y(d.value) + ")";
+      })
+      .attr("x", 3)
+      .attr("dy", ".35em")
+      .text(function (d) {
+        // console.log(d.name)
+        return d.name;
+    });
+
+    var lineInteraction = topicEnter
+      .on('mouseover', function(d, i){
+        d3.select(this)
+        .attr('stroke', 'black')
+      })
+      .on('mouseout', function(d, i){
+        d3.select(this)
+        .attr('stroke', function(d){
+          return color(d.topic);
+        })
+      })
+      ;
+      
+  }
+
+  return obj;
 }

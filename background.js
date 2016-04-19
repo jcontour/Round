@@ -245,13 +245,14 @@ function saveData(data, timeSpent){
         var date = today.getFullYear() + " " + today.getMonth() + " " + today.getDate();
         console.log('today ', date);
 
-        if (info['habitInfo']['readPerDay'].hasOwnProperty(date)){
-            info['habitInfo']['readPerDay'][date] ++;
+        if(info['articleInfo'][category].hasOwnProperty(date)){
+            info['articleInfo'][category]['countPerDay'].hasOwnProperty(date) ++;
         } else {
-            info['habitInfo']['readPerDay'][date] = 1;
+            info['articleInfo'][category]['countPerDay'][date] = 1;
         }
-        
-        console.log("habit info being saved ", info['habitInfo']);
+
+        // console.log("habit info being saved ", info['habitInfo']);
+        console.log(info)
 
         // convert back into JSON and save
         var strData = JSON.stringify( info );
@@ -267,60 +268,70 @@ function initStorage(){
         articleInfo : {
             "world": {
                 count: 1,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0
             },
             "usa": {
                 count: 1,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0
             },
             "politics": {
                 count: 1,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0
             },
             "business": {
                 count: 1,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0
             },
             "tech" : {
                 count: 1,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0
             },
             "science" : {
                 count: 1,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0
             },
             "health" : {
                 count: 1,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0
             },
             "opinion": {
                 count: 1,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0
             },
             "sports" : {
                 count: 1,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0
             },
             "culture" : {
                 count: 1,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0,
@@ -328,6 +339,7 @@ function initStorage(){
             },
             "other" : {
                 count: 0,
+                countPerDay : {},
                 read: [],
                 keywords: [],
                 timeSpent: 0,
@@ -336,13 +348,31 @@ function initStorage(){
         },
         habitInfo: {
             totalRead : 0,
-            feedback : {},
-            readPerDay : {
-                "2016 3 8" : 2,
-                "2016 3 9" : 6,
-                "2016 3 10" : 4,
-                "2016 3 11" : 7,
-            }
+            feedback : {}//,
+            // readPerDay : [
+            //     { topic: "world",
+            //     counts: {} },
+            //     { topic: "usa",
+            //     counts: {} },
+            //     { topic: "politics",
+            //     counts: {} },
+            //     { topic: "business",
+            //     counts: {} },
+            //     { topic: "tech",
+            //     counts: {} },
+            //     { topic: "science",
+            //     counts: {} },
+            //     { topic: "health",
+            //     counts: {} },
+            //     { topic: "opinion",
+            //     counts: {} },
+            //     { topic: "sports",
+            //     counts: {} },
+            //     { topic: "culture",
+            //     counts: {} },
+            //     { topic: "other",
+            //     counts: {} }
+            // ]
         }
     }
 
