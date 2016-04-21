@@ -25,28 +25,30 @@ function getData(doShowOnboarding) {
 
             console.log("habitinfo ", habitInfo);
 
-            var data = []
+            var pieData = []
             console.log("init graph");
 
             for (var category in articleInfo) {                    // load data into array
                 // console.log(category, " ", articleInfo[category]['count']);
-                data.push({
+                pieData.push({
                     label: category,
-                    count: (articleInfo[category]['count'])      // transform count to show less-read sections
+                    count: (articleInfo[category]['count'])
                 })
-                // console.log ("data ", data)
+                
             }
-            initPieChart(data);            // otherwise, show graph
 
-            // var barChartData = []
-            // for (date in habitInfo['readPerDay']){
-            //     barChartData.push({topic: date : date, count: habitInfo['readPerDay'][date]});
-            // }
+            initPieChart(pieData);            // otherwise, show graph
 
-            // initBarChart(barChartData);
+            var lineGraphData = []
+            for (var category in articleInfo) { 
+                lineGraphData.push({
+                    topic: category,
+                    countPerDay: (articleInfo[category]['countPerDay'])
+                })
+            }
 
-            // var myChart = new Chart();
-            // myChart.setup(barChartData);
+            var myChart = new Chart();
+            myChart.setup(lineGraphData);
 
             showProfile(profile);
             showFeedback(habitInfo);
@@ -416,138 +418,53 @@ function initPieChart(json) {
     }      
 }
 
-function initBarChart(data){
-    console.log("bar chart data ", data);
-
-    // Set the dimensions of the canvas / graph
-    var margin = {top: 10, right: 10, bottom: 10, left: 10},
-        width = 320 - margin.left - margin.right,
-        height = 120 - margin.top - margin.bottom;
- 
-    var parseDate = d3.time.format("%Y %m %d").parse;
-     
-    // var x = d3.time.scale().range([0, width]);
-    // var y = d3.scale.linear().range([height, 0]);
-
-    var x = d3.scale.ordinal()
-        // .range([0, width]);
-        .rangeRoundBands([0, width], .1);
-
-    var y = d3.scale.linear()
-        .range([height, 0]);
-     
-    // Define the axes
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom")
-        // .ticks(5)
-        ;
-     
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient("left")
-        // .ticks(10, "%");
-        // .ticks(5)
-        ;
-     
-    // Define the line
-    // var valueline = d3.svg.line()
-    //     .x(function(d) { return x(d.date); })
-    //     .y(function(d) { return y(d.count); });
-    
-    // Adds the svg canvas
-    var svg = d3.select("#per-day-chart")
-        .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        // Get the data
-        data.forEach(function(d) {
-            d.date = parseDate(d.date);
-            d.count = +d.count;
-        });
-     
-        // Scale the range of the data
-        x.domain(data.map(function(d) { return d.date; }));
-        y.domain([0, d3.max(data, function(d) { return d.count; })]);
-     
-        // append the bars
-        svg.selectAll(".bar")
-            .data(data)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function(d) { return x(d.date); })
-            .attr("width", x.rangeBand())
-            .attr("y", function(d) { return y(d.count); })
-            .attr("height", function(d) { return height - y(d.count); });
-     
-        // Add the X Axis
-        svg.append("g")     
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis)
-            ;
-     
-        // // Add the Y Axis
-        svg.append("g")     
-            .attr("class", "y axis")
-            .call(yAxis)
-            ;
-}
-
 // --------------------------------------------------------------------------------------
 //          LINE GRAPH
 // --------------------------------------------------------------------------------------
 
-var topics = [politics, world, usa, sports];
-
-var data = [];
-
-for (var i = 0; i < topics.length; i ++){
-  data.push(topics[i]);
-}
 
 var Chart = function(){
 
   var obj = {};
 
-  var margin = { top: 20, right: 80, bottom: 30, left: 50 };
-  var width = window.innerWidth - margin.left - margin.right;
-  var height = window.innerHeight - margin.top - margin.bottom;
-  var tip = d3.tip()
-      .attr('class', 'd3-tip')
-      .offset([-10, 0])
-      .html(function(d) {
-          return d.topic;
-      })
-      ;                 
+  // var margin = { top: 20, right: 80, bottom: 30, left: 50 };
+  var width = 300;
+  var height = 200;
+  // var tip = d3.tip()
+  //     .attr('class', 'd3-tip')
+  //     .offset([-10, 0])
+  //     .html(function(d) {
+  //         return d.topic;
+  //     })
+  //     ;                 
   var svg, chart;
   var xScale, yScale;
   var xAxis, yAxis;
   var x, y;
-  // var color;
 
   obj.setup = function(dataset){
-    svg = d3.select("#chart").append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    svg = d3.select("#per-day-chart")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height+50)
+      // .attr("transform", "translate(0," + height + ")")
+      ;
 
-    svg.append("g")
+      chart = svg.append("g")
+      // .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .attr("transform", "translate(0, 50)")
+      ;
+
+    chart.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      // .call(xAxis);
+      ;
 
-    svg.append("g")
+    chart.append("g")
         .attr("class", "y axis")
-        // .call(yAxis)
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
+        // .attr("transform", "rotate(-90)")
+        // .attr("y", 6)
+        // .attr("dy", ".71em")
         // .style("text-anchor", "end")
         // .text("Temperature (ºF)")
         ;
@@ -555,33 +472,21 @@ var Chart = function(){
     obj.update(dataset);
   }
 
-  // obj.updateData = function(dataset){
-  //   obj.update(dataset);
-  // }
-
   obj.update = function(dataset){
     var parseDate = d3.time.format("%Y %m %d").parse;
     dataset.forEach(function (kv) {
-      kv.counts.forEach(function (d) {
+      kv.countPerDay.forEach(function (d) {
         d.date = parseDate(d.date);
       });
     });
 
-    var minX = d3.min(data, function (kv) { return d3.min(kv.counts, function (d) { return d.date; }) });
-    var maxX = d3.max(data, function (kv) { return d3.max(kv.counts, function (d) { return d.date; }) });
-    var minY = d3.min(data, function (kv) { return d3.min(kv.counts, function (d) { return d.count; }) });
-    var maxY = d3.max(data, function (kv) { return d3.max(kv.counts, function (d) { return d.count; }) });  
+    var minX = d3.min(dataset, function (kv) { return d3.min(kv.countPerDay, function (d) { return d.date; }) });
+    var maxX = d3.max(dataset, function (kv) { return d3.max(kv.countPerDay, function (d) { return d.date; }) });
+    var minY = d3.min(dataset, function (kv) { return d3.min(kv.countPerDay, function (d) { return d.count; }) });
+    var maxY = d3.max(dataset, function (kv) { return d3.max(kv.countPerDay, function (d) { return d.count; }) });  
 
-    var color = d3.scale.category10();
-    color.domain(data.map(function (d) { return d.topic; }));
-
-    xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom");
-
-    yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left");
+    // var color = d3.scale.category10();
+    // color.domain(dataset.map(function (d) { return d.topic; }));
 
     x = d3.time.scale()
       .range([0, width])
@@ -591,8 +496,38 @@ var Chart = function(){
       .range([height, 0])
       .domain([minY, maxY]);
 
+    xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom")
+      .ticks(5)
+      .tickSize(-height, 0, 0)
+      .tickFormat("")
+      // .style("stroke-dasharray", ("3, 3"))
+      ;
+
+    yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .ticks(5)
+      .tickSize(-width, 0, 0)
+      .tickFormat("")
+      // .style("stroke-dasharray", ("3, 3")) 
+      ;
+
+    chart.select('.x.axis')                 
+      // .transition()
+      // .duration(2000)
+      .call(xAxis)
+      ;
+
+    chart.select('.y.axis')
+      // .transition()
+      // .duration(2000)                    
+      .call(yAxis)
+      ;
+
     var line = d3.svg.line()
-      .interpolate("cardinal")
+      .interpolate("monotone")
       .x(function (d) {
       return x(d.date);
     })
@@ -601,54 +536,85 @@ var Chart = function(){
     });
 
     var topic = svg.selectAll(".topic")
-      .data(data);
+      .data(dataset);
 
     var topicEnter = topic.enter()
       .append("g")
       .attr("class", "topic")
+      .attr("transform", "translate(0, 50)")
       // .attr("id", function(d){ return d.topic + "line"; })
       ;
 
     topicEnter.append("path")
       .attr("class", "line")
+      .attr("fill", "none")
       .attr("d", function (d) {
-      return line(d.counts);
+      return line(d.countPerDay);
     })
-      .style("stroke", function (d) {
-      return color(d.topic);
-    });
+      .style("stroke-width", "3")
+      .style("stroke", "#00C189")
+      .on('mouseover', function(d, i){
+        d3.select(this)
+        .style('stroke', '#E3594B')
+      })
+    .on('mouseout', function(d, i){
+        d3.select(this)
+        .style('stroke', '#00C189')
+      })
 
-    topicEnter.append("text")
+
+    topicEnter.append("svg:text")
       .datum(function (d) {
       return {
         name: d.topic,
-        date: d.counts[d.counts.length - 1].date,
-        value: d.counts[d.counts.length - 1].count
+        date: d.countPerDay[d.countPerDay.length - 1].date,
+        value: d.countPerDay[d.countPerDay.length - 1].count
         };
       })
       .attr("transform", function (d) {
         return "translate(" + x(d.date) + "," + y(d.value) + ")";
       })
       .attr("x", 3)
+      .attr("fill", "white")
+      .attr("opacity", "0")
       .attr("dy", ".35em")
       .text(function (d) {
         // console.log(d.name)
         return d.name;
     });
 
-    var lineInteraction = topicEnter
-      .on('mouseover', function(d, i){
+    topicEnter.on('mouseover', function(d, i){
         d3.select(this)
-        .attr('stroke', 'black')
+        .select("text")
+        .attr("opacity", "100")
       })
       .on('mouseout', function(d, i){
         d3.select(this)
-        .attr('stroke', function(d){
-          return color(d.topic);
-        })
+        .select("text")
+        .attr("opacity", "0")
       })
       ;
-      
+
+    // var circle = chart.selectAll('circle')
+    //     .data(function(){
+    //         console.log("data ", dataset);
+    //     })
+    //     .enter()
+    //     .append('circle')
+    //     ;
+
+    // circle.attr('cx', function(d, i){
+    //         return x(d.date);
+    //     })
+    //     .attr('cy', function(d, i){
+    //         console.log(d.count);
+    //         return y(d.count);
+    //     })
+    //     .attr('r', 5)
+    //     .style("stroke", '#00C189')
+    //     .attr("fill", '#0C152E')
+    //     ;
+
   }
 
   return obj;

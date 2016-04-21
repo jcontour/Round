@@ -59,14 +59,14 @@ function nyt(callback){
     // getting page metadata
     var headline = $('meta[name=hdl]').attr("content");
     var category = $('meta[name=CG]').attr("content");
-    var keywords = $('meta[name=keywords]').attr("content");
+    // var keywords = $('meta[name=keywords]').attr("content");
     var url = $('meta[property="og:url"]').attr("content");
 
     var metadata = {
         site: "nyt",
         headline: headline,
         category: category,
-        keywords: keywords,
+        // keywords: keywords,
         url: url
     };
 
@@ -78,14 +78,14 @@ function buzzfeed(callback){
     // getting page metadata
     var headline = $('meta[name=title]').attr("content");
     var category = $('meta[property="article:section"]').attr("content");
-    var keywords = $('meta[name="news_keywords"]').attr("content");
+    // var keywords = $('meta[name="news_keywords"]').attr("content");
     var url = $('meta[property="og:url"]').attr("content");
 
     var metadata = {
         site: "buzzfeed",
         headline: headline,
         category: category,
-        keywords: keywords,
+        // keywords: keywords,
         url: url
     };
 
