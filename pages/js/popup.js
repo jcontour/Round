@@ -209,6 +209,8 @@ function listen(){      //  event listeners
 
 function showProfile(show, data){
 
+    console.log("how many days ", data[0].countPerDay.length);
+
     if (data[0].countPerDay.length > 3) {
         if (show == true) {
             $('#chart').hide();
@@ -240,7 +242,7 @@ function showHelp(show){
     } else {
         $('#help').hide();
         $('#chart').show();
-        $('#go-profile').show();
+        showProfile(false, lineGraphData)
         $('#go-help').show().attr("src", "img/help.png");
         listen();
     }

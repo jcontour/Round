@@ -186,6 +186,7 @@ function getData(callback) {
 
 var totalRead = 0;
 var yesterday = null;
+
 function saveData(data, timeSpent) {
     // metadata formatted as: headline, category, keywords, url
 
@@ -245,6 +246,7 @@ function saveData(data, timeSpent) {
 
         var date = today.getFullYear() + " " + (today.getMonth() + 1) + " " + today.getDate();
         console.log('today ', date);
+        console.log('yesterday ', yesterday);
 
         if (yesterday != date) {
             for (topic in info['articleInfo']){
@@ -295,9 +297,9 @@ function initStorage() {
             "world": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 17", count: "1"},
-                {date : "2016 4 18", count: "3"},
-                {date : "2016 4 19", count: "4"}
+                // {date : "2016 4 17", count: "1"},
+                // {date : "2016 4 18", count: "3"},
+                // {date : "2016 4 19", count: "4"}
                 ],
                 read: [],
                 // keywords: [],
@@ -306,9 +308,9 @@ function initStorage() {
             "usa": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 17", count: "2"},
-                {date : "2016 4 18", count: "5"},
-                {date : "2016 4 19", count: "3"}
+                // {date : "2016 4 17", count: "2"},
+                // {date : "2016 4 18", count: "5"},
+                // {date : "2016 4 19", count: "3"}
                 ],
                 read: [],
                 // keywords: [],
@@ -317,9 +319,9 @@ function initStorage() {
             "politics": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 17", count: "0"},
-                {date : "2016 4 18", count: "1"},
-                {date : "2016 4 19", count: "0"}
+                // {date : "2016 4 17", count: "0"},
+                // {date : "2016 4 18", count: "1"},
+                // {date : "2016 4 19", count: "0"}
                 ],
                 read: [],
                 // keywords: [],
@@ -328,9 +330,9 @@ function initStorage() {
             "business": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 17", count: "2"},
-                {date : "2016 4 18", count: "1"},
-                {date : "2016 4 19", count: "0"}
+                // {date : "2016 4 17", count: "2"},
+                // {date : "2016 4 18", count: "1"},
+                // {date : "2016 4 19", count: "0"}
                 ],
                 read: [],
                 // keywords: [],
@@ -339,9 +341,9 @@ function initStorage() {
             "tech": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 17", count: "2"},
-                {date : "2016 4 18", count: "4"},
-                {date : "2016 4 19", count: "5"}
+                // {date : "2016 4 17", count: "2"},
+                // {date : "2016 4 18", count: "4"},
+                // {date : "2016 4 19", count: "5"}
                 ],
                 read: [],
                 // keywords: [],
@@ -350,9 +352,9 @@ function initStorage() {
             "science": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 17", count: "5"},
-                {date : "2016 4 18", count: "4"},
-                {date : "2016 4 19", count: "4"}
+                // {date : "2016 4 17", count: "5"},
+                // {date : "2016 4 18", count: "4"},
+                // {date : "2016 4 19", count: "4"}
                 ],
                 read: [],
                 // keywords: [],
@@ -361,9 +363,9 @@ function initStorage() {
             "health": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 17", count: "0"},
-                {date : "2016 4 18", count: "2"},
-                {date : "2016 4 19", count: "1"}
+                // {date : "2016 4 17", count: "0"},
+                // {date : "2016 4 18", count: "2"},
+                // {date : "2016 4 19", count: "1"}
                 ],
                 read: [],
                 // keywords: [],
@@ -372,9 +374,9 @@ function initStorage() {
             "opinion": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 17", count: "1"},
-                {date : "2016 4 18", count: "1"},
-                {date : "2016 4 19", count: "0"}
+                // {date : "2016 4 17", count: "1"},
+                // {date : "2016 4 18", count: "1"},
+                // {date : "2016 4 19", count: "0"}
                 ],
                 read: [],
                 // keywords: [],
@@ -383,9 +385,9 @@ function initStorage() {
             "sports": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 17", count: "0"},
-                {date : "2016 4 18", count: "0"},
-                {date : "2016 4 19", count: "1"}
+                // {date : "2016 4 17", count: "0"},
+                // {date : "2016 4 18", count: "0"},
+                // {date : "2016 4 19", count: "1"}
                 ],
                 read: [],
                 // keywords: [],
@@ -394,9 +396,9 @@ function initStorage() {
             "culture": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 17", count: "3"},
-                {date : "2016 4 18", count: "0"},
-                {date : "2016 4 19", count: "2"}
+                // {date : "2016 4 17", count: "3"},
+                // {date : "2016 4 18", count: "0"},
+                // {date : "2016 4 19", count: "2"}
                 ],
                 read: [],
                 // keywords: [],
@@ -406,9 +408,9 @@ function initStorage() {
             "other": {
                 count: 0,
                 countPerDay: [
-                {date : "2016 4 17", count: "0"},
-                {date : "2016 4 18", count: "5"},
-                {date : "2016 4 19", count: "6"}
+                // {date : "2016 4 17", count: "0"},
+                // {date : "2016 4 18", count: "5"},
+                // {date : "2016 4 19", count: "6"}
                 ],
                 read: [],
                 // keywords: [],
@@ -446,10 +448,17 @@ function initStorage() {
         }
     }
 
+    var today = new Date;
+    var date = today.getFullYear() + " " + (today.getMonth() + 1) + " " + today.getDate();
+    for (topic in info['articleInfo']){
+        info['articleInfo'][topic]['countPerDay'].push({ date: date, count: 0 })
+        yesterday = date;
+    }
+
     var data = JSON.stringify(info);
 
     chrome.storage.sync.set({ "data": data }, function() {
-        // console.log("saved ", data); 
+        console.log("saved ", data); 
     });
 }
 
