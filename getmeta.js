@@ -59,6 +59,10 @@ function nyt(callback){
     // getting page metadata
     var headline = $('meta[name=hdl]').attr("content");
     var category = $('meta[name=CG]').attr("content");
+
+    if (category == "us" && $('meta[name=SCG]').attr("content") == "politics") {
+        category = "politics"
+    }
     // var keywords = $('meta[name=keywords]').attr("content");
     var url = $('meta[property="og:url"]').attr("content");
 

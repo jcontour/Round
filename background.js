@@ -118,25 +118,25 @@ function parseHabits(info, numRead) { // function to check reading habits, is us
             }
         }
 
-        console.log("rounded ", rounded)
-        console.log("over ", over)
-        console.log("under ", under);
+        // console.log("rounded ", rounded)
+        // console.log("over ", over)
+        // console.log("under ", under);
 
         if (rounded.length >= 6) {
             changeIcon("pos");
-            console.log("you're doing great")
+            // console.log("you're doing great")
             feedback = 1;
         } else if (under.length >= 4) {
             changeIcon("neg");
-            console.log("you're missing out on ", under[getRandom(0, under.length)].label);
+            // console.log("you're missing out on ", under[getRandom(0, under.length)].label);
             feedback = 2;
 
         } else if (over.length >= 3) {
             changeIcon("normal");
-            console.log("you are super caught up on ", over[getRandom(0, under.length)].label, "!")
-            if (under.length > 0) {
-                console.log("Why don't you read some ", under[getRandom(0, under.length)].label, "?");
-            }
+            // console.log("you are super caught up on ", over[getRandom(0, under.length)].label, "!")
+            // if (under.length > 0) {
+            //     // console.log("Why don't you read some ", under[getRandom(0, under.length)].label, "?");
+            // }
             feedback = 0;
         } else {
             changeIcon("normal");
@@ -144,6 +144,13 @@ function parseHabits(info, numRead) { // function to check reading habits, is us
         }
 
         return { rounded: rounded, over: over, under: under, feedback: feedback }
+    
+    } else {
+
+        changeIcon("normal");
+        feedback = 0;
+        return { rounded: null, over: null, under: null, feedback: feedback }
+    
     }
 }
 
@@ -178,7 +185,7 @@ function getData(callback) {
 }
 
 var totalRead = 0;
-
+var yesterday = null;
 function saveData(data, timeSpent) {
     // metadata formatted as: headline, category, keywords, url
 
@@ -189,7 +196,7 @@ function saveData(data, timeSpent) {
         var info = JSON.parse(result.data);
 
         // var totalRead = info['habitInfo']['totalRead'];
-
+        console.log("info ", info);
         // category of article
         var category = data.category.toLowerCase();
         console.log("category: ", category);
@@ -198,12 +205,14 @@ function saveData(data, timeSpent) {
         var categories = ["world", "usa", "politics", "business", "tech", "science", "health", "opinion", "sports", "culture"];
         if (category == "us" || category == "usnews") {
             category = "usa";
-        } else if (category == "books" || category == "tvandmovies" || category == "uk" || category == "movies" || category == "music" || category == "arts" || category == "style" || category == "lgbt" || category == "community" || category == "food") {
+        } else if (category == "books" || category == "tvandmovies" || category == "uknews" || category == "uk" || category == "movies" || category == "music" || category == "arts" || category == "fashion" || category == "style" || category == "lgbt" || category == "community" || category == "food") {
             category = "culture";
         } else if (category == "technology") {
             category = "tech";
-        } else if (category == "uknews") {
-            category = "world";
+        } else if (category == "longform") {
+            category = "opinion";
+        // } else if (category == "uknews") {
+        //     category = "world";
         } else if (categories.indexOf(category) == -1) {
             console.log("category set as other");
             category = "other";
@@ -233,20 +242,29 @@ function saveData(data, timeSpent) {
         info['habitInfo']['totalRead'] = totalRead;
 
         var today = new Date;
-        var date = today.getFullYear() + " " + today.getMonth() + " " + today.getDate();
+
+        var date = today.getFullYear() + " " + (today.getMonth() + 1) + " " + today.getDate();
         console.log('today ', date);
 
-        dateCheck(function(ifExists) {
-            if (ifExists) {
+        if (yesterday != date) {
+            for (topic in info['articleInfo']){
+                console.log("starting new day of reading");
+                info['articleInfo'][topic]['countPerDay'].push({ date: date, count: 0 })
+                yesterday = date;
+            }
+        }
+
+        // dateCheck(function(ifExists) {
+            // if (ifExists) {
                 for (var i = 0; i < info['articleInfo'][category]['countPerDay'].length; i++) {
                     if (info['articleInfo'][category]['countPerDay'][i]['date'] == date) {
                         info['articleInfo'][category]['countPerDay'][i]['count']++;
                     }
                 }
-            } else {
-                info['articleInfo'][category]['countPerDay'].push({ date: date, count: 1 });
-            }
-        });
+            // } else {
+                // info['articleInfo'][category]['countPerDay'].push({ date: date, count: 1 });
+            // }
+        // });
 
         function dateCheck(callback) {
             var dateExists;
@@ -277,9 +295,9 @@ function initStorage() {
             "world": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 19", count: "1"},
+                {date : "2016 4 17", count: "1"},
                 {date : "2016 4 18", count: "3"},
-                {date : "2016 4 17", count: "4"}
+                {date : "2016 4 19", count: "4"}
                 ],
                 read: [],
                 // keywords: [],
@@ -288,9 +306,9 @@ function initStorage() {
             "usa": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 19", count: "2"},
+                {date : "2016 4 17", count: "2"},
                 {date : "2016 4 18", count: "5"},
-                {date : "2016 4 17", count: "3"}
+                {date : "2016 4 19", count: "3"}
                 ],
                 read: [],
                 // keywords: [],
@@ -299,9 +317,9 @@ function initStorage() {
             "politics": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 19", count: "0"},
+                {date : "2016 4 17", count: "0"},
                 {date : "2016 4 18", count: "1"},
-                {date : "2016 4 17", count: "0"}
+                {date : "2016 4 19", count: "0"}
                 ],
                 read: [],
                 // keywords: [],
@@ -310,9 +328,9 @@ function initStorage() {
             "business": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 19", count: "2"},
+                {date : "2016 4 17", count: "2"},
                 {date : "2016 4 18", count: "1"},
-                // {date : "2016 4 17", count: "5"}
+                {date : "2016 4 19", count: "0"}
                 ],
                 read: [],
                 // keywords: [],
@@ -321,9 +339,9 @@ function initStorage() {
             "tech": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 19", count: "2"},
+                {date : "2016 4 17", count: "2"},
                 {date : "2016 4 18", count: "4"},
-                {date : "2016 4 17", count: "5"}
+                {date : "2016 4 19", count: "5"}
                 ],
                 read: [],
                 // keywords: [],
@@ -332,9 +350,9 @@ function initStorage() {
             "science": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 19", count: "5"},
+                {date : "2016 4 17", count: "5"},
                 {date : "2016 4 18", count: "4"},
-                {date : "2016 4 17", count: "4"}
+                {date : "2016 4 19", count: "4"}
                 ],
                 read: [],
                 // keywords: [],
@@ -343,9 +361,9 @@ function initStorage() {
             "health": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 19", count: "3"},
+                {date : "2016 4 17", count: "0"},
                 {date : "2016 4 18", count: "2"},
-                {date : "2016 4 17", count: "1"}
+                {date : "2016 4 19", count: "1"}
                 ],
                 read: [],
                 // keywords: [],
@@ -354,9 +372,9 @@ function initStorage() {
             "opinion": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 19", count: "1"},
+                {date : "2016 4 17", count: "1"},
                 {date : "2016 4 18", count: "1"},
-                // {date : "2016 4 17", count: "0"}
+                {date : "2016 4 19", count: "0"}
                 ],
                 read: [],
                 // keywords: [],
@@ -365,9 +383,9 @@ function initStorage() {
             "sports": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 19", count: "0"},
+                {date : "2016 4 17", count: "0"},
                 {date : "2016 4 18", count: "0"},
-                {date : "2016 4 17", count: "1"}
+                {date : "2016 4 19", count: "1"}
                 ],
                 read: [],
                 // keywords: [],
@@ -376,9 +394,9 @@ function initStorage() {
             "culture": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 4 19", count: "3"},
-                // {date : "2016 4 18", count: "4"},
-                {date : "2016 4 17", count: "2"}
+                {date : "2016 4 17", count: "3"},
+                {date : "2016 4 18", count: "0"},
+                {date : "2016 4 19", count: "2"}
                 ],
                 read: [],
                 // keywords: [],
@@ -388,9 +406,9 @@ function initStorage() {
             "other": {
                 count: 0,
                 countPerDay: [
-                // {date : "2016 4 19", count: "4"},
+                {date : "2016 4 17", count: "0"},
                 {date : "2016 4 18", count: "5"},
-                {date : "2016 4 17", count: "6"}
+                {date : "2016 4 19", count: "6"}
                 ],
                 read: [],
                 // keywords: [],

@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
 //          INIT
 // --------------------------------------------------------------------------------------
 
+var lineGraphData = []
+
 function getData(doShowOnboarding) {
 
     if (doShowOnboarding) {
@@ -39,7 +41,6 @@ function getData(doShowOnboarding) {
 
             initPieChart(pieData);            // otherwise, show graph
 
-            var lineGraphData = []
             for (var category in articleInfo) { 
                 lineGraphData.push({
                     topic: category,
@@ -47,10 +48,12 @@ function getData(doShowOnboarding) {
                 })
             }
 
+
+
             var myChart = new Chart();
             myChart.setup(lineGraphData);
 
-            showProfile(profile);
+            showProfile(profile, lineGraphData);
             showFeedback(habitInfo);
             listen();
         });
@@ -119,6 +122,8 @@ var slide = 1;
 var profile = false;
 var help = false;
 
+
+
 function listen(){      //  event listeners
 
     $('#slide-up').on('click', function(){      // change slide button
@@ -144,7 +149,7 @@ function listen(){      //  event listeners
     $('#go-profile').off('click').on('click', function(){
         console.log("profile")
         profile = !profile;
-        showProfile(profile);
+        showProfile(profile, lineGraphData);
     });
 
     $('#go-help').off('click').on('click', function(){
@@ -154,24 +159,73 @@ function listen(){      //  event listeners
     });
 
     $('#ok').off('click').on('click', function(){     // close rss box
-        $('#feedback-wrapper').fadeOut();
+        $('#feedback-wrapper').hide();
         chrome.runtime.sendMessage({directive: "reset-icon"});
     });
+
+    $('.filter').off('click').on('click', function(){
+        console.log(this.id);
+        $('.line').hide();
+        $('#' + this.id + "-line").show();
+        // getRSS(this.id);
+    })
+
+    $('#all').off('click').on('click', function(){
+        $('.line').show();
+    })
+
+    $('#none').off('click').on('click', function(){
+        $('.line').hide();
+    })
+
+    $('.filter').on('mouseenter', function(){
+        var whichLine = "#" + this.id + "-line"
+        d3.select(whichLine)
+            .style("stroke", "#E3594B");
+    })
+
+    $('.filter').on('mouseleave', function(){
+        var whichLine = "#" + this.id + "-line"
+        d3.select(whichLine)
+            .style("stroke", "#00C189");
+    })
+
+    $('.line').on('mouseenter', function(){
+        var whichFilter = this.id.split('-');
+        whichFilter = whichFilter[0];   
+        $('#'+whichFilter).css("color", '#E3594B')
+        d3.select(this)
+            .style("stroke", "#E3594B");
+    })
+
+    $('.line').on('mouseleave', function(){
+        var whichFilter = this.id.split('-');
+        whichFilter = whichFilter[0];
+        $('#'+whichFilter).css("color", 'white')
+        d3.select(this)
+            .style("stroke", "#00C189");
+    })
 }
 
-function showProfile(show){
-    if (show == true) {
-        $('#chart').hide();
-        $('#rss').hide();
-        $('#go-help').hide();
-        $('#profile').show();
-        $('#go-profile').attr("src", "img/chart.png");
+function showProfile(show, data){
+
+    if (data[0].countPerDay.length > 3) {
+        if (show == true) {
+            $('#chart').hide();
+            $('#rss').hide();
+            $('#go-help').hide();
+            $('#profile').show();
+            $('#go-profile').attr("src", "img/chart.png");
+            listen();
+        } else {
+            $('#profile').hide();
+            $('#chart').show();
+            $('#go-help').show();
+            $('#go-profile').show().attr("src", "img/profile.png");
+            listen();
+        }
     } else {
-        $('#profile').hide();
-        $('#chart').show();
-        $('#go-help').show();
-        $('#go-profile').show().attr("src", "img/profile.png");
-        listen();
+        $('#go-profile').hide();
     }
 }
 
@@ -203,9 +257,10 @@ function getRandom(min, max) {
 }
 
 function showFeedback(habitInfo){
-    console.log("feedback showing ", habitInfo.feedback.feedback);
+    // console.log("feedback showing ", habitInfo.feedback.feedback);
+    console.log("habitInfo ", habitInfo.feedback);
 
-    if (habitInfo.totalRead > 3) {
+    if (habitInfo.totalRead > 10) {
         switch (habitInfo.feedback.feedback) {
             case 0:
                 // do nothing
@@ -227,6 +282,9 @@ function showFeedback(habitInfo){
     }
 }
 
+// --------------------------------------------------------------------------------------
+//          RSS FUNCTIONS
+// --------------------------------------------------------------------------------------
 
 function getRSS(category){
 
@@ -283,10 +341,6 @@ function getRSS(category){
     }
 
 };
-
-// --------------------------------------------------------------------------------------
-//          RSS FUNCTIONS
-// --------------------------------------------------------------------------------------
 
 function callRSS (call) {
 
@@ -443,16 +497,18 @@ var Chart = function(){
   var x, y;
 
   obj.setup = function(dataset){
+
+
     svg = d3.select("#per-day-chart")
       .append("svg")
       .attr("width", width)
-      .attr("height", height+50)
+      .attr("height", height+10)
       // .attr("transform", "translate(0," + height + ")")
       ;
 
       chart = svg.append("g")
       // .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      .attr("transform", "translate(0, 50)")
+      .attr("transform", "translate(0, 10)")
       ;
 
     chart.append("g")
@@ -475,7 +531,9 @@ var Chart = function(){
   obj.update = function(dataset){
     var parseDate = d3.time.format("%Y %m %d").parse;
     dataset.forEach(function (kv) {
+        console.log("count per day ", kv.countPerDay)
       kv.countPerDay.forEach(function (d) {
+
         d.date = parseDate(d.date);
       });
     });
@@ -535,32 +593,53 @@ var Chart = function(){
       return y(d.count);
     });
 
+
+
     var topic = svg.selectAll(".topic")
       .data(dataset);
 
     var topicEnter = topic.enter()
       .append("g")
       .attr("class", "topic")
-      .attr("transform", "translate(0, 50)")
+      .attr("transform", "translate(0, 10)")
       // .attr("id", function(d){ return d.topic + "line"; })
       ;
 
     topicEnter.append("path")
       .attr("class", "line")
+      .attr("id", function(d,i){
+        return (d.topic + "-line");
+      })
       .attr("fill", "none")
       .attr("d", function (d) {
       return line(d.countPerDay);
     })
       .style("stroke-width", "3")
       .style("stroke", "#00C189")
-      .on('mouseover', function(d, i){
-        d3.select(this)
-        .style('stroke', '#E3594B')
-      })
-    .on('mouseout', function(d, i){
-        d3.select(this)
-        .style('stroke', '#00C189')
-      })
+    //   .on('mouseover', function(d, i){
+    //     d3.select(this)
+    //     .style('stroke', '#E3594B')
+    //   })
+    // .on('mouseout', function(d, i){
+    //     d3.select(this)
+    //     .style('stroke', '#00C189')
+    //   })
+
+    // topicEnter.append('circle')
+    //     .attr("class", "circle")
+    //     .attr('cx', function(d, i){
+    //         return x(d.count);
+    //         // return d.count;
+    //     })
+    //     .attr('cy', function(d, i){
+    //         // console.log(d.count);
+    //         return y(d.date);
+    //         // return d.date;
+    //     })
+    //     .attr('r', 5)
+    //     .style("stroke", '#00C189')
+    //     .attr("fill", '#0C152E')
+    //     ;
 
 
     topicEnter.append("svg:text")
@@ -595,20 +674,36 @@ var Chart = function(){
       })
       ;
 
+    //rearrange data for circles
+    // var circleData = [];
+    // // console.log(dataset);
+    // for (var i = 0; i < dataset.length; i++){
+    //     for (var j = 0; j < dataset[i].countPerDay.length; j ++){
+    //         circleData.push(dataset[i].countPerDay[j]);
+    //     }
+    // }
+
+    // circleData.forEach(function(d){
+    //     d.count = +d.count;
+    //     d.date = parseDate(d.date);
+    // })
+
+    // console.log(circleData)
+
     // var circle = chart.selectAll('circle')
-    //     .data(function(){
-    //         console.log("data ", dataset);
-    //     })
+    //     .data(circleData)
     //     .enter()
     //     .append('circle')
     //     ;
 
     // circle.attr('cx', function(d, i){
-    //         return x(d.date);
+    //         // return x(+d.count);
+    //         return d.count;
     //     })
     //     .attr('cy', function(d, i){
-    //         console.log(d.count);
-    //         return y(d.count);
+    //         // console.log(d.count);
+    //         // return y(d.date);
+    //         return d.date;
     //     })
     //     .attr('r', 5)
     //     .style("stroke", '#00C189')
