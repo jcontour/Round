@@ -211,7 +211,7 @@ function showProfile(show, data){
 
     console.log("how many days ", data[0].countPerDay.length);
 
-    if (data[0].countPerDay.length > 3) {
+    if (data[0].countPerDay.length == 2) {
         if (show == true) {
             $('#chart').hide();
             $('#rss').hide();
