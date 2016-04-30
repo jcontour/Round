@@ -1,6 +1,22 @@
 // -------------------------------------------
-//          MESSAGE LISTENERS
+//          CHROME LISTENERS
 // -------------------------------------------
+
+chrome.runtime.onInstalled.addListener(function (details) {
+    if(details.reason == 'install') { initStorage() };
+});
+
+
+// chrome.runtime.onStartup.addListener(function(){
+//     var default_data = initData();
+//     chrome.storage.sync.get({data: default_data}, function(result) {
+//         console.log("data ", result);
+//         // If "data" wasn't present in storage, result.data is a copy of default_data
+//         // Otherwise, result.data is a copy of the actual stored value
+//         chrome.storage.sync.set(result); // To save the default, if not saved
+//     });
+// });
+
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
@@ -24,11 +40,13 @@ chrome.runtime.onMessage.addListener(
                 return true;
                 break;
             case "popup-open":
-                sendResponse(showOnboarding);
-                showOnboarding = false;
+                sendResponse("hello");
                 break;
             case "reset-icon":
                 changeIcon("normal");
+                break;
+            case "onboarding-false":
+                onboardingFalse();
                 break;
             default:
                 // for debugging
@@ -43,8 +61,6 @@ chrome.runtime.onMessage.addListener(
 //          OTHER FUNCTIONS
 // -------------------------------------------
 
-var showOnboarding = true;
-
 var currArticleState = false;
 var prevArticleState = false;
 var currTime = 0;
@@ -54,22 +70,22 @@ var currArticleInfo, prevArticleInfo;
 
 function getTime(data, isArticle) {
 
-    prevArticleInfo = currArticleInfo; // saving data
+    prevArticleInfo = currArticleInfo;          // saving data
     currArticleInfo = data;
 
-    prevArticleState = currArticleState; // saving state
+    prevArticleState = currArticleState;        // saving state
     currArticleState = isArticle;
 
-    prevTime = currTime; // getting time
+    prevTime = currTime;                        // getting time
     currTime = Date.now();
 
-    if (prevArticleState) { // if previous page was an article, save the info
+    if (prevArticleState) {                     // if previous page was an article, save the info
         timeSpent = Math.ceil((currTime - prevTime) / 1000); // calculate time spent in seconds
         console.log("spent ", timeSpent, " seconds on ", prevArticleInfo);
         saveData(prevArticleInfo, timeSpent);
     }
 
-    if (currArticleState) { // automatically add current article into data, time will be logged on page change
+    if (currArticleState) {                     // automatically add current article into data, time will be logged on page change
         saveData(currArticleInfo, 0);
     }
 }
@@ -85,13 +101,13 @@ function getRandom(min, max) {
 
 var feedback = 0;
 
-function parseHabits(info, numRead) { // function to check reading habits, is user good or need to be reminded of topic?
+function parseHabits(info, numRead) {           // function to check reading habits, is user good or need to be reminded of topic?
     console.log("checking habits...");
     console.log(numRead, " articles read");
 
     var interval = 10;
 
-    if (numRead % interval == 0) { // check every ten articles
+    if (numRead % interval == 0) {              // check every ten articles
 
         var rounded = []
         var over = []
@@ -290,7 +306,6 @@ function saveData(data, timeSpent) {
     });
 }
 
-
 function initStorage() {
     var info = {
         articleInfo: {
@@ -420,31 +435,8 @@ function initStorage() {
         },
         habitInfo: {
             totalRead: 0,
-            feedback: {} //,
-            // readPerDay : [
-            //     { topic: "world",
-            //     counts: {} },
-            //     { topic: "usa",
-            //     counts: {} },
-            //     { topic: "politics",
-            //     counts: {} },
-            //     { topic: "business",
-            //     counts: {} },
-            //     { topic: "tech",
-            //     counts: {} },
-            //     { topic: "science",
-            //     counts: {} },
-            //     { topic: "health",
-            //     counts: {} },
-            //     { topic: "opinion",
-            //     counts: {} },
-            //     { topic: "sports",
-            //     counts: {} },
-            //     { topic: "culture",
-            //     counts: {} },
-            //     { topic: "other",
-            //     counts: {} }
-            // ]
+            feedback: {},
+            doShowOnboarding: true
         }
     }
 
@@ -462,7 +454,15 @@ function initStorage() {
     });
 }
 
-initStorage();
+function onboardingFalse(){         // do not show onboarding again
+    chrome.storage.sync.get("data", function(result) {
+        var info = JSON.parse(result.data);
+        info.habitInfo.doShowOnboarding = false;
+        console.log(info);
+        var strData = JSON.stringify(info);
+        chrome.storage.sync.set({ "data": strData });
+    });
+}
 
 // ----------------------------
 // storage event listener

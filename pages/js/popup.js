@@ -11,21 +11,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
 var lineGraphData = []
 
-function getData(doShowOnboarding) {
+function getData(res) {
 
-    if (doShowOnboarding) {
+    chrome.storage.sync.get("data", function (result) {
+        var parsed = JSON.parse( result.data );
+
+        var articleInfo = parsed.articleInfo;
+        var habitInfo = parsed.habitInfo;
+
+        console.log("habitinfo ", habitInfo);
+
+    if (habitInfo.doShowOnboarding == true) {
+
         $('#logo').hide();
-        $('#go-profile').hide();
+        // $('#go-profile').hide();
         $('#go-help').hide();
+
+        chrome.runtime.sendMessage({directive: "onboarding-false"}, function(response){});
+        
         onboarding();
+
     } else {
-        chrome.storage.sync.get("data", function (result) {
-            var parsed = JSON.parse( result.data );
-
-            var articleInfo = parsed.articleInfo;
-            var habitInfo = parsed.habitInfo;
-
-            console.log("habitinfo ", habitInfo);
 
             var pieData = []
             console.log("init graph");
@@ -48,17 +54,15 @@ function getData(doShowOnboarding) {
                 })
             }
 
-
-
             var myChart = new Chart();
             myChart.setup(lineGraphData);
 
             showProfile(profile, lineGraphData);
             showFeedback(habitInfo);
             listen();
-        });
+        };
 
-    }
+    });
 }
 
 function isZero(value, index, ar){      // checking count values
@@ -211,7 +215,7 @@ function showProfile(show, data){
 
     console.log("how many days ", data[0].countPerDay.length);
 
-    if (data[0].countPerDay.length == 2) {
+    if (data[0].countPerDay.length >= 2) {
         if (show == true) {
             $('#chart').hide();
             $('#rss').hide();
@@ -227,7 +231,7 @@ function showProfile(show, data){
             listen();
         }
     } else {
-        $('#go-profile').hide();
+        // $('#go-profile').hide();
     }
 }
 
