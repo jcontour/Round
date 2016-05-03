@@ -37,6 +37,18 @@ html body {
 	display: none;
 }
 
+#back {
+	width: 60px;
+	height: 60px;
+	position: absolute;
+	top: 140px;
+	right: 140px;
+	cursor: pointer;
+	display: none;
+}
+
+
+
 /*-----------------------------------*/
 /*			ONBOARDING	 			 */
 /*-----------------------------------*/
@@ -95,6 +107,8 @@ html body {
 
 #rss{
 	width: calc(100% - 10px);
+	height: 220px;
+	overflow: scroll;
 	background-color: #E3594B;
 	font-size: .8em;
 	padding: 5px;
@@ -104,13 +118,46 @@ html body {
 	position: relative;
 }
 
+#which-rss-container{
+	position: absolute;
+	width: calc(100% - 60px);
+	height: 150px;
+	top: 339px;
+	padding: 20px;
+	text-align: center;
+	display: none;
+}
+
+.whichRSS {
+	background-color: #0C152E;
+	color: #E3594B;
+	font-weight: 700;
+	text-align: center;
+	width: 50px;
+	position: relative;
+	display: inline-block;
+	margin: 0;
+	height: 50px;
+	padding: 10px;
+	cursor: pointer;
+}
+
+#rssNYT {
+	/*left: 50px;*/
+}
+
+#rssBF {
+	/*right: 50px;*/
+}
+
 #close-rss{
 	position: absolute;
 	top: -25px;
 	right: 0px;
 	width: 20px;
 	height: 20px;
-	background-image: url("../img/close.png");
+	background-color: white;
+	/*background-image: url("../img/close.png");*/
 	background-size: cover;
 	cursor: pointer;
 }
@@ -229,13 +276,13 @@ svg text {
 #filter-container {
 	list-style: none;
 	position: fixed;
-	width: 250px;
+	width: 300px;
 	top: 57px;
 	left: 20px;
 	font-family: Roboto;
 	font-weight: 300;
 	letter-spacing: 2px;
-	font-size: 8pt;
+	font-size: 9pt;
 	/*text-align: center;*/
 	margin: 0;
 	padding: 0;
@@ -244,7 +291,7 @@ svg text {
 .button {
 	display: inline;
 	margin-right: 3px;
-	line-height: 15px;
+	line-height: 17px;
 	cursor: pointer;
 }
 

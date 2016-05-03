@@ -34,7 +34,7 @@ chrome.runtime.onMessage.addListener(
                 break;
             case "get-url":
                 chrome.tabs.query({ active: true, currentWindow: true }, function(tab) {
-                    console.log("current url: ", tab[0].url);
+                    // console.log("current url: ", tab[0].url);
                     sendResponse(tab[0].url);
                 });
                 return true;
@@ -81,7 +81,7 @@ function getTime(data, isArticle) {
 
     if (prevArticleState) {                     // if previous page was an article, save the info
         timeSpent = Math.ceil((currTime - prevTime) / 1000); // calculate time spent in seconds
-        console.log("spent ", timeSpent, " seconds on ", prevArticleInfo);
+        // console.log("spent ", timeSpent, " seconds on ", prevArticleInfo);
         saveData(prevArticleInfo, timeSpent);
     }
 
@@ -223,40 +223,68 @@ function saveData(data, timeSpent) {
         if (category == "us" || category == "usnews") {
             category = "usa";
         } else if (category == "books" || category == "tvandmovies" || category == "uknews" || category == "uk" || category == "movies" || category == "music" || category == "arts" || category == "fashion" || category == "style" || category == "lgbt" || category == "community" || category == "food") {
+
+            // adding subcategories
+            if (info['articleInfo']["culture"]["subcategories"].hasOwnProperty(category)) {
+                info['articleInfo']["culture"]["subcategories"][category]["count"] ++;
+            } else {
+                info['articleInfo']["culture"]["subcategories"][category] = {count: 1}
+            }
+
             category = "culture";
         } else if (category == "technology") {
             category = "tech";
         } else if (category == "longform") {
             category = "opinion";
-        // } else if (category == "uknews") {
-        //     category = "world";
         } else if (categories.indexOf(category) == -1) {
             console.log("category set as other");
+
+            // adding subcategories
+            if (info['articleInfo']["other"]["subcategories"].hasOwnProperty(category)) {
+                info['articleInfo']["other"]["subcategories"][category]["count"] ++;
+            } else {
+                info['articleInfo']["other"]["subcategories"][category] = {count: 1}
+            }
+
             category = "other";
         }
-
         
-        // if (data.url in info[category]['read']) {       // if article read already, add timespent to existing log
-        if (info['articleInfo'][category]['read'].indexOf(data.url) == -1) {
-            // console.log("article not read ")
-            console.log("adding to: ", category)
-            info['articleInfo'][category]['count']++;
-            info['articleInfo'][category]['read'].push(data.url);
-            // info[category]['timeSpent'] += timeSpent;
-            // for (var i in keywords) {
-            //     info['articleInfo'][category]['keywords'].push(keywords[i]);
-            // }
-            totalRead++;
-        } else { // if not read, add it log
-            // console.log("article read ");
-            console.log("adding ", timeSpent, " to log");
-            info['articleInfo'][category]['timeSpent'] += timeSpent;
+        articleRead(function(read){
+            if (!read) {
+
+                console.log("adding to: ", category)
+                
+                info['articleInfo'][category]['count']++;
+                info['articleInfo'][category]['read'].push({title: data.headline, url: data.url});
+                
+                totalRead++;
+            } else { 
+
+                console.log("adding ", timeSpent, " to log");
+                info['articleInfo'][category]['timeSpent'] += timeSpent;
+            }
+        })
+
+        function articleRead(callback) {
+            var articleRead;
+            for (var i = 0; i < info['articleInfo'][category]['read'].length; i++) {
+                if (info['articleInfo'][category]['read'][i]['title'] == data.headline) {
+                    articleRead = true;
+                } else {
+                    articleRead = false;
+                }
+            }
+            callback(articleRead);
         }
 
         var habits = parseHabits(info, totalRead);
         console.log("habit data ", habits);
         info['habitInfo']['feedback'] = habits;
         info['habitInfo']['totalRead'] = totalRead;
+
+        // ------------------
+        //  checking date for line graph
+        // ------------------
 
         var today = new Date;
 
@@ -272,17 +300,11 @@ function saveData(data, timeSpent) {
             }
         }
 
-        // dateCheck(function(ifExists) {
-            // if (ifExists) {
-                for (var i = 0; i < info['articleInfo'][category]['countPerDay'].length; i++) {
-                    if (info['articleInfo'][category]['countPerDay'][i]['date'] == date) {
-                        info['articleInfo'][category]['countPerDay'][i]['count']++;
-                    }
-                }
-            // } else {
-                // info['articleInfo'][category]['countPerDay'].push({ date: date, count: 1 });
-            // }
-        // });
+        for (var i = 0; i < info['articleInfo'][category]['countPerDay'].length; i++) {
+            if (info['articleInfo'][category]['countPerDay'][i]['date'] == date) {
+                info['articleInfo'][category]['countPerDay'][i]['count']++;
+            }
+        }
 
         function dateCheck(callback) {
             var dateExists;
@@ -296,7 +318,6 @@ function saveData(data, timeSpent) {
             callback(dateExists);
         }
 
-        // console.log(info)
         // convert back into JSON and save
         var strData = JSON.stringify(info);
         // console.log(strData);
@@ -317,7 +338,6 @@ function initStorage() {
                 // {date : "2016 4 19", count: "4"}
                 ],
                 read: [],
-                // keywords: [],
                 timeSpent: 0
             },
             "usa": {
@@ -328,7 +348,6 @@ function initStorage() {
                 // {date : "2016 4 19", count: "3"}
                 ],
                 read: [],
-                // keywords: [],
                 timeSpent: 0
             },
             "politics": {
@@ -350,7 +369,6 @@ function initStorage() {
                 // {date : "2016 4 19", count: "0"}
                 ],
                 read: [],
-                // keywords: [],
                 timeSpent: 0
             },
             "tech": {
@@ -361,7 +379,6 @@ function initStorage() {
                 // {date : "2016 4 19", count: "5"}
                 ],
                 read: [],
-                // keywords: [],
                 timeSpent: 0
             },
             "science": {
@@ -372,7 +389,6 @@ function initStorage() {
                 // {date : "2016 4 19", count: "4"}
                 ],
                 read: [],
-                // keywords: [],
                 timeSpent: 0
             },
             "health": {
@@ -383,7 +399,6 @@ function initStorage() {
                 // {date : "2016 4 19", count: "1"}
                 ],
                 read: [],
-                // keywords: [],
                 timeSpent: 0
             },
             "opinion": {
@@ -394,7 +409,6 @@ function initStorage() {
                 // {date : "2016 4 19", count: "0"}
                 ],
                 read: [],
-                // keywords: [],
                 timeSpent: 0
             },
             "sports": {
@@ -405,7 +419,6 @@ function initStorage() {
                 // {date : "2016 4 19", count: "1"}
                 ],
                 read: [],
-                // keywords: [],
                 timeSpent: 0
             },
             "culture": {
@@ -416,9 +429,9 @@ function initStorage() {
                 // {date : "2016 4 19", count: "2"}
                 ],
                 read: [],
-                // keywords: [],
+                subcategories: {},
                 timeSpent: 0,
-                subCategories: {}
+                subcategories: {}
             },
             "other": {
                 count: 0,
@@ -428,9 +441,9 @@ function initStorage() {
                 // {date : "2016 4 19", count: "6"}
                 ],
                 read: [],
-                // keywords: [],
+                subcategories: {},
                 timeSpent: 0,
-                subCategories: {}
+                subcategories: {}
             }
         },
         habitInfo: {

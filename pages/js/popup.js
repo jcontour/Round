@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
 // --------------------------------------------------------------------------------------
 
 var lineGraphData = []
+var pieData = []
+var cultureData = []
+var otherData = []
 
 function getData(res) {
 
@@ -19,7 +22,7 @@ function getData(res) {
         var articleInfo = parsed.articleInfo;
         var habitInfo = parsed.habitInfo;
 
-        console.log("habitinfo ", habitInfo);
+        // console.log("habitinfo ", habitInfo);
 
     if (habitInfo.doShowOnboarding == true) {
 
@@ -33,20 +36,34 @@ function getData(res) {
 
     } else {
 
-            var pieData = []
-            console.log("init graph");
-
+            // parse data for pie chart
             for (var category in articleInfo) {                    // load data into array
                 // console.log(category, " ", articleInfo[category]['count']);
                 pieData.push({
                     label: category,
                     count: (articleInfo[category]['count'])
-                })
-                
+                })   
+            }
+
+            for (var category in articleInfo["culture"]["subcategories"]) {                    // load data into array
+                // console.log(category, " ", articleInfo[category]['count']);
+                cultureData.push({
+                    label: category,
+                    count: (articleInfo["culture"]["subcategories"][category]['count'])
+                })   
+            }
+
+            for (var category in articleInfo["other"]["subcategories"]) {                    // load data into array
+                // console.log(category, " ", articleInfo[category]['count']);
+                otherData.push({
+                    label: category,
+                    count: (articleInfo["other"]["subcategories"][category]['count'])
+                })   
             }
 
             initPieChart(pieData);            // otherwise, show graph
 
+            // parse data for line graph
             for (var category in articleInfo) { 
                 lineGraphData.push({
                     topic: category,
@@ -162,6 +179,11 @@ function listen(){      //  event listeners
         showHelp(help);
     });
 
+    $('#back').off('click').on('click', function(){
+        $('#back').hide()
+        initPieChart(pieData);
+    })
+
     $('#ok').off('click').on('click', function(){     // close rss box
         $('#feedback-wrapper').hide();
         chrome.runtime.sendMessage({directive: "reset-icon"});
@@ -176,10 +198,6 @@ function listen(){      //  event listeners
 
     $('#all').off('click').on('click', function(){
         $('.line').show();
-    })
-
-    $('#none').off('click').on('click', function(){
-        $('.line').hide();
     })
 
     $('.filter').on('mouseenter', function(){
@@ -209,13 +227,21 @@ function listen(){      //  event listeners
         d3.select(this)
             .style("stroke", "#00C189");
     })
+
+    $('#rssNYT').off('click').on('click', function(){
+        getRSS("nyt", rssCategory);
+    })
+
+    $('#rssBF').off('click').on('click', function(){
+        getRSS("bf", rssCategory);
+    })
 }
 
 function showProfile(show, data){
 
-    console.log("how many days ", data[0].countPerDay.length);
+    // console.log("how many days ", data[0].countPerDay.length);
 
-    if (data[0].countPerDay.length >= 2) {
+    // if (data[0].countPerDay.length >= 2) {
         if (show == true) {
             $('#chart').hide();
             $('#rss').hide();
@@ -230,9 +256,9 @@ function showProfile(show, data){
             $('#go-profile').show().attr("src", "img/profile.png");
             listen();
         }
-    } else {
+    // } else {
         // $('#go-profile').hide();
-    }
+    // }
 }
 
 function showHelp(show){
@@ -240,12 +266,14 @@ function showHelp(show){
         $('#chart').hide();
         $('#rss').hide();
         $('#go-profile').hide();
+        $('#go-help').css("left", "280px");
         $('#help').show();
         // $('#go-profile').show();
         $('#go-help').attr("src", "img/chart.png");
     } else {
         $('#help').hide();
         $('#chart').show();
+        $('#go-help').css("left", "15px");
         showProfile(false, lineGraphData)
         $('#go-help').show().attr("src", "img/help.png");
         listen();
@@ -264,7 +292,7 @@ function getRandom(min, max) {
 
 function showFeedback(habitInfo){
     // console.log("feedback showing ", habitInfo.feedback.feedback);
-    console.log("habitInfo ", habitInfo.feedback);
+    // console.log("habitInfo ", habitInfo.feedback);
 
     if (habitInfo.totalRead > 10) {
         switch (habitInfo.feedback.feedback) {
@@ -292,58 +320,99 @@ function showFeedback(habitInfo){
 //          RSS FUNCTIONS
 // --------------------------------------------------------------------------------------
 
-function getRSS(category){
+function showRSS(category){
+    rssCategory = category;
+    $('#rss').show();
+    $('#rss').html('<div id="close-rss"></div>')
+    $('#which-rss-container').show();
+    listen();
+}
 
+var rssCategory;
+
+function getRSS(site, category){
+    // $('#rssNYT').hide();
+    $('#which-rss-container').hide();
     $('#rss').empty();
-    $('#rss').append('<div id="close-rss"></div>')
+    $('#rss').html('<div id="close-rss"></div>')
 
-    switch (category) {             // convert call to site specific rss categories
-        case "world":
-            callRSS({"site": "nyt", "category": "World"}); 
-            callRSS({"site": "bf", "category": "world"});
-            break;
-        case "usa":
-            callRSS({"site": "nyt", "category": "US"}); 
-            callRSS({"site": "bf", "category": "usnews"});
-            break;
-        case "politics":
-            callRSS({"site": "nyt", "category": "Politics"}); 
-            callRSS({"site": "bf", "category": "politics"});
-            break;
-        case "business":
-            callRSS({"site": "nyt", "category": "Business"}); 
-            callRSS({"site": "bf", "category": "business"});
-            break;
-        case "opinion":
-            callRSS({"site": "nyt", "category": "Opinion"}); 
-            callRSS({"site": "bf", "category": "community"});
-            break;
-        case "tech":
-            callRSS({"site": "nyt", "category": "Technology"}); 
-            callRSS({"site": "bf", "category": "technology"});
-            break;
-        case "science":
-            callRSS({"site": "nyt", "category": "Science"}); 
-            callRSS({"site": "bf", "category": "science"});
-            break;
-        case "health":
-            callRSS({"site": "nyt", "category": "Health"}); 
-            callRSS({"site": "bf", "category": "health"});
-            break;
-        case "sports":
-            callRSS({"site": "nyt", "category": "Sports"}); 
-            callRSS({"site": "bf", "category": "sports"});
-            break;
-        case "culture":
-            callRSS({"site": "nyt", "category": "FashionandStyle"}); 
-            callRSS({"site": "bf", "category": "culture"});
-            break;
-        case "other":
-            callRSS({"site": "nyt", "category": "MostViewed"}); 
-            callRSS({"site": "bf", "category": "index"});
-            break;
-        default:
-            console.log("other category");
+    if (site == "bf") {
+        switch (category) {             // convert call to site specific rss categories
+            case "world":
+                callRSS({"site": "bf", "category": "world"});
+                break;
+            case "usa":
+                callRSS({"site": "bf", "category": "usnews"});
+                break;
+            case "politics":
+                callRSS({"site": "bf", "category": "politics"});
+                break;
+            case "business":
+                callRSS({"site": "bf", "category": "business"});
+                break;
+            case "opinion":
+                callRSS({"site": "bf", "category": "community"});
+                break;
+            case "tech":
+                callRSS({"site": "bf", "category": "technology"});
+                break;
+            case "science":
+                callRSS({"site": "bf", "category": "science"});
+                break;
+            case "health":
+                callRSS({"site": "bf", "category": "health"});
+                break;
+            case "sports":
+                callRSS({"site": "bf", "category": "sports"});
+                break;
+            case "culture":
+                callRSS({"site": "bf", "category": "culture"});
+                break;
+            case "other":
+                callRSS({"site": "bf", "category": "index"});
+                break;
+            default:
+                console.log("other category");
+        }
+    }
+    if (site == "nyt") {
+        switch (category) {             // convert call to site specific rss categories
+            case "world":
+                callRSS({"site": "nyt", "category": "World"}); 
+                break;
+            case "usa":
+                callRSS({"site": "nyt", "category": "US"}); 
+                break;
+            case "politics":
+                callRSS({"site": "nyt", "category": "Politics"}); 
+                break;
+            case "business":
+                callRSS({"site": "nyt", "category": "Business"}); 
+                break;
+            case "opinion":
+                callRSS({"site": "nyt", "category": "Opinion"}); 
+                break;
+            case "tech":
+                callRSS({"site": "nyt", "category": "Technology"}); 
+                break;
+            case "science":
+                callRSS({"site": "nyt", "category": "Science"}); 
+                break;
+            case "health":
+                callRSS({"site": "nyt", "category": "Health"}); 
+                break;
+            case "sports":
+                callRSS({"site": "nyt", "category": "Sports"}); 
+                break;
+            case "culture":
+                callRSS({"site": "nyt", "category": "FashionandStyle"}); 
+                break;
+            case "other":
+                callRSS({"site": "nyt", "category": "MostViewed"}); 
+                break;
+            default:
+                console.log("other category");
+        }
     }
 
 };
@@ -366,7 +435,7 @@ function callRSS (call) {
         success:function(data) {
             // console.log("data: ", data)
             // console.log("site ", call[i].site, " title ", text, " link ", link);
-            $(data).find("item:lt(2)").each(function (i) {  // getting two items from each feed 
+            $(data).find("item:lt(5)").each(function (i) {  // getting two items from each feed 
                 var el = $(this);
                 console.log("------------------------");
                 // console.log("title      : " + el.find("title").text());
@@ -386,14 +455,14 @@ function callRSS (call) {
 //          PIE CHART
 // --------------------------------------------------------------------------------------
 
-function initPieChart(json) {
+function initPieChart(pieData) {
 
-    $('#chart').empty;
+    $('#chart').html('');
 
-    var dataSet = json;
+    // var dataSet = pieData;
 
-    var max = d3.max( dataSet, function(d) { return d['count'] });
-    var min = d3.min( dataSet, function(d) { return d['count'] });
+    var max = d3.max( pieData, function(d) { return d['count'] });
+    var min = d3.min( pieData, function(d) { return d['count'] });
 
     var canvasWidth = 300,
       canvasHeight = 300,
@@ -401,7 +470,7 @@ function initPieChart(json) {
     
     var vis = d3.select("#chart")
       .append("svg:svg")
-        .data([dataSet])
+        .data([pieData])
         .attr("width", canvasWidth)
         .attr("height", canvasHeight)
         .append("svg:g")
@@ -412,12 +481,6 @@ function initPieChart(json) {
         return outerRadius - (d['data']['count']/max); 
         console.log("radius ", outerRadius)
     });
-
-    var color = d3.scale.linear()
-        .domain([0, max])
-        .range(["#002419", "#00C189"])
-        .interpolate(d3.interpolateHcl)
-        ;
 
     var pie = d3.layout.pie()
       .value( function(d) { return d.count; } )
@@ -432,10 +495,7 @@ function initPieChart(json) {
       ;
 
     arcs.append("svg:path")
-      // .attr("fill", '#00C189' )
-      // .attr("fill", function(d) { return color(d.value) } )
       .attr("fill", function(d){
-        // console.log(d.data.label, " ", (d.endAngle - d.startAngle))
         if(d.endAngle - d.startAngle > .24){
             return "#00C189"
         } else {
@@ -443,7 +503,21 @@ function initPieChart(json) {
         }
       })
       .attr("d", arc)
-      .on('click', function(d){ getRSS(d.data.label); })
+      .on('click', function(d){ 
+        if (d.data.label == "culture" && d.data.count > 1){
+            $('#rss').hide();
+            $('#back').show();
+            initPieChart(cultureData);
+            listen();
+        } else if (d.data.label == "other") {
+            $('#rss').hide();
+            $('#back').show();
+            initPieChart(otherData);
+            listen();
+        } else {
+            showRSS(d.data.label); 
+        }
+      })
       ;
 
     arcs.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")
@@ -536,10 +610,10 @@ var Chart = function(){
 
   obj.update = function(dataset){
     var parseDate = d3.time.format("%Y %m %d").parse;
+    
     dataset.forEach(function (kv) {
-        console.log("count per day ", kv.countPerDay)
+        // console.log("count per day ", kv.countPerDay)
       kv.countPerDay.forEach(function (d) {
-
         d.date = parseDate(d.date);
       });
     });
@@ -620,7 +694,7 @@ var Chart = function(){
       .attr("d", function (d) {
       return line(d.countPerDay);
     })
-      .style("stroke-width", "3")
+      .style("stroke-width", "5")
       .style("stroke", "#00C189")
     //   .on('mouseover', function(d, i){
     //     d3.select(this)
@@ -653,14 +727,24 @@ var Chart = function(){
       return {
         name: d.topic,
         date: d.countPerDay[d.countPerDay.length - 1].date,
-        value: d.countPerDay[d.countPerDay.length - 1].count
+        value: d.countPerDay[d.countPerDay.length - 1].count,
+        max: d3.max(d.countPerDay, function(i){return i.count})
         };
       })
       .attr("transform", function (d) {
         return "translate(" + x(d.date) + "," + y(d.value) + ")";
       })
       .attr("x", 3)
-      .attr("fill", "white")
+      .attr("fill", function(d){
+        if ( d.max == 0 ){
+            $('#' + d.name).css("color", "#3754A1");
+            $('#' + d.name).css("cursor", "default");
+        } else {
+            $('#' + d.name).css("color", "white");
+        }
+
+        return "white"
+      })
       .attr("opacity", "0")
       .attr("dy", ".35em")
       .text(function (d) {
@@ -668,17 +752,17 @@ var Chart = function(){
         return d.name;
     });
 
-    topicEnter.on('mouseover', function(d, i){
-        d3.select(this)
-        .select("text")
-        .attr("opacity", "100")
-      })
-      .on('mouseout', function(d, i){
-        d3.select(this)
-        .select("text")
-        .attr("opacity", "0")
-      })
-      ;
+    // topicEnter.on('mouseover', function(d, i){
+    //     d3.select(this)
+    //     .select("text")
+    //     .attr("opacity", "100")
+    //   })
+    //   .on('mouseout', function(d, i){
+    //     d3.select(this)
+    //     .select("text")
+    //     .attr("opacity", "0")
+    //   })
+    //   ;
 
     //rearrange data for circles
     // var circleData = [];

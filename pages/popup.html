@@ -11,14 +11,20 @@
 	<body>
 		<img id="go-help" src="img/help.png">
 		<img id="go-profile" src="img/profile.png">
+		<img id="back" src="img/back.png">
 		<div id="chart"></div>
-		<div id="rss"></div>
+		<div id="rss">
+			<!-- <div id="close-rss"></div> -->
+		</div>
+		<div id="which-rss-container">
+			<p>Find articles from...</p>
+			<div class="whichRSS" id="rssNYT">NYT</div>
+			<div class="whichRSS" id="rssBF">BF</div>
+		</div>
 		<div class="section" id="profile">
 
 			<h2> YOUR HABITS OVER TIME </h2>
 			<ul id="filter-container">
-				<li class="button" id="all">all</li>
-				<li class="button" id="none">none</li>
 				<li class="button filter" id="politics">politics</li>
 				<li class="button filter" id="world">world</li>
 				<li class="button filter" id="usa">usa</li>
@@ -30,6 +36,7 @@
 				<li class="button filter" id="culture">culture</li>
 				<li class="button filter" id="opinion">opinion</li>
 				<li class="button filter" id="other">other</li>
+				<li class="button" id="all">all</li>
 			</ul>
 			<div id="per-day-chart"></div>
 
