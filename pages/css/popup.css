@@ -112,7 +112,7 @@ html body {
 	background-color: #E3594B;
 	font-size: .8em;
 	padding: 5px;
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 	margin-top: 5px;
 	display: none;
 	position: relative;
@@ -128,18 +128,26 @@ html body {
 	display: none;
 }
 
+#which-rss-container p{
+	letter-spacing: 2px;
+}
+
 .whichRSS {
 	background-color: #0C152E;
 	color: #E3594B;
 	font-weight: 700;
 	text-align: center;
-	width: 50px;
+	width: 75px;
 	position: relative;
 	display: inline-block;
-	margin: 0;
-	height: 50px;
+	margin: 0px;
+	height: 40px;
 	padding: 10px;
 	cursor: pointer;
+}
+
+.whichRSS:hover{
+	color: white;
 }
 
 #rssNYT {
@@ -147,7 +155,10 @@ html body {
 }
 
 #rssBF {
-	/*right: 50px;*/
+	padding-top: 15px;
+	height: 35px;
+	/*position: relative;*/
+	/*top: -9px;*/
 }
 
 #close-rss{
@@ -171,6 +182,7 @@ html body {
 	width: calc(100% - 8px);
 /*	margin: 2px;
 */	padding: 2px;
+	cursor: pointer;
 }
 
 .link-source {
@@ -202,7 +214,6 @@ html body {
 .rss-wrapper:hover{
 	background-color: white;
 	color: #E3594B;
-	cursor: pointer;
 }
 
 /*-----------------------------------*/
@@ -255,11 +266,11 @@ svg text {
 }
 
 #per-day-chart {
-	width: 300px;
-	height: 210px;
+	width: 320px;
+	height: 230px;
 	position: absolute;
 	bottom: 10px;
-	margin: 10px;
+	/*margin: 10px;*/
 }
 
 #profile h2 {
@@ -288,17 +299,67 @@ svg text {
 	padding: 0;
 }
 
+.active {
+	color: white;
+	cursor: pointer;
+}
+
+.active:hover{
+	color: #E3594B;
+}
+
+.inactive {
+	color: #3754A1;
+	cursor: default;
+}
+
+.inactive:hover {
+	color: #3754A1;
+}
+
 .button {
 	display: inline;
 	margin-right: 3px;
 	line-height: 17px;
+	/*cursor: pointer;*/
+}
+
+#articles-read-container{
+	width: calc(100% - 10px);
+	height: 220px;
+	overflow: scroll;
+	background-color: #E3594B;
+	font-size: .8em;
+	padding: 5px;
+	margin-bottom: 10px;
+	margin-top: 5px;
+	display: none;
+	position: relative;
+	top: 325px;
+}
+
+#articles-read-container h1 {
+	font-size: 12pt;
+	font-family: Roboto;
+	font-weight: 700;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	display: block;
+	text-align: center;
+}
+
+.article-read{
+	display: inline-block;
+	width: calc(100% - 8px);
+	margin: 4px 2px;
+	padding: 2px;
 	cursor: pointer;
 }
 
-.filter:hover{
+.article-read:hover{
+	background-color: white;
 	color: #E3594B;
 }
-
 
 .axis {
 	stroke: #274573;

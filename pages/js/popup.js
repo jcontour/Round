@@ -13,15 +13,17 @@ var lineGraphData = []
 var pieData = []
 var cultureData = []
 var otherData = []
+var articleInfo;
 
 function getData(res) {
 
     chrome.storage.sync.get("data", function (result) {
         var parsed = JSON.parse( result.data );
 
-        var articleInfo = parsed.articleInfo;
+        articleInfo = parsed.articleInfo;
         var habitInfo = parsed.habitInfo;
 
+        console.log("article info ", articleInfo)
         // console.log("habitinfo ", habitInfo);
 
     if (habitInfo.doShowOnboarding == true) {
@@ -75,7 +77,7 @@ function getData(res) {
             myChart.setup(lineGraphData);
 
             showProfile(profile, lineGraphData);
-            showFeedback(habitInfo);
+            // showFeedback(habitInfo);
             listen();
         };
 
@@ -118,12 +120,14 @@ function slideChange(slide){    // change onboarding slides on click
         case 2: 
             $('#onboarding').css("background-position", "75% 50%");
             $('#onboarding').css("background-size", "contain");
+            $('#slide-up').text("\> \>")
             $('#onboarding').css("background-image", "url(img/onboarding02.png)");
             $('#onboard-text').html('<p>Round works in the background, taking notes when you read the news.</p>');
             break;
         case 3:
             $('#onboarding').css("background-position", "50% 50%"); 
             $('#onboarding').css("background-image", "url(img/onboarding04.png)");
+            $('#slide-up').text("\>")
             $('#onboard-text').html('<p>The popup displays your reading habits, and highlights the areas you might have missed.</p> <p>If you need some help catching up, click on the slice for the latest articles.</p>');
             break;
         case 4: 
@@ -191,13 +195,16 @@ function listen(){      //  event listeners
 
     $('.filter').off('click').on('click', function(){
         console.log(this.id);
-        $('.line').hide();
-        $('#' + this.id + "-line").show();
-        // getRSS(this.id);
+        if ($(this).hasClass("active")){
+            $('.line').hide();
+            $('#' + this.id + "-line").show();
+            showArticlesRead(this.id);
+        }
     })
 
     $('#all').off('click').on('click', function(){
         $('.line').show();
+        $('#articles-read-container').hide();
     })
 
     $('.filter').on('mouseenter', function(){
@@ -215,7 +222,9 @@ function listen(){      //  event listeners
     $('.line').on('mouseenter', function(){
         var whichFilter = this.id.split('-');
         whichFilter = whichFilter[0];   
-        $('#'+whichFilter).css("color", '#E3594B')
+        if ($('#'+whichFilter).hasClass("active")){
+            $('#'+whichFilter).css("color", '#E3594B')
+        }
         d3.select(this)
             .style("stroke", "#E3594B");
     })
@@ -223,10 +232,27 @@ function listen(){      //  event listeners
     $('.line').on('mouseleave', function(){
         var whichFilter = this.id.split('-');
         whichFilter = whichFilter[0];
-        $('#'+whichFilter).css("color", 'white')
-        d3.select(this)
+        if ($('#'+whichFilter).hasClass("active")){
+            $('#'+whichFilter).css("color", 'white')
+        }        d3.select(this)
             .style("stroke", "#00C189");
     })
+
+    $('.line').off('click').on('click', function(){
+        var whichFilter = this.id.split('-');
+        whichFilter = whichFilter[0];
+
+        if ($('#' + whichFilter).hasClass("active")){
+            $('.line').hide();
+            $('#' + this.id).show();
+            showArticlesRead(whichFilter);
+        }
+    })
+
+    $('.article-read').off('click').on('click', function(){   // on article click, open new tab with link
+        console.log("clicked link: ", $(this).attr('id'))
+        chrome.tabs.create({url: $(this).attr('id')});
+    });
 
     $('#rssNYT').off('click').on('click', function(){
         getRSS("nyt", rssCategory);
@@ -253,6 +279,8 @@ function showProfile(show, data){
             $('#profile').hide();
             $('#chart').show();
             $('#go-help').show();
+            $('#articles-read-container').hide();
+            $('.line').show();
             $('#go-profile').show().attr("src", "img/profile.png");
             listen();
         }
@@ -280,41 +308,54 @@ function showHelp(show){
     }
 }
 
+function showArticlesRead(category){
+    $('#articles-read-container').html('');
+
+    $('#articles-read-container').append('<h1>Articles read in ' + category + '</h1>');
+    for (var i =0; i < articleInfo[category]['read'].length; i++){
+        
+        $('#articles-read-container').append('<div class="article-read" id=' + articleInfo[category]['read'][i].url + '>' + articleInfo[category]['read'][i].title + '</div>');
+    }
+
+    $('#articles-read-container').show()
+    listen();
+}
+
 // --------------------------------------------------------------------------------------
 //         FEEDBACK STUFF
 // --------------------------------------------------------------------------------------
 
-function getRandom(min, max) {
-    var num = Math.floor(Math.random() * (max));
-    console.log("random num ", num);
-    return num;
-}
+// function getRandom(min, max) {
+//     var num = Math.floor(Math.random() * (max));
+//     console.log("random num ", num);
+//     return num;
+// }
 
-function showFeedback(habitInfo){
-    // console.log("feedback showing ", habitInfo.feedback.feedback);
-    // console.log("habitInfo ", habitInfo.feedback);
+// function showFeedback(habitInfo){
+//     // console.log("feedback showing ", habitInfo.feedback.feedback);
+//     // console.log("habitInfo ", habitInfo.feedback);
 
-    if (habitInfo.totalRead > 10) {
-        switch (habitInfo.feedback.feedback) {
-            case 0:
-                // do nothing
-            break;
-            case 1:
-                console.log("feedback : ", habitInfo.feedback.feedback);
-                $('#feedback-text').text("You\'re doing great!")
-                $('#feedback-wrapper').show();
-                listen();
-            break;
-            case 2:
-                console.log("feedback : ", habitInfo.feedback.feedback);
-                $('#feedback-text').text("You could catch up on")
-                $('#category-rec').text(habitInfo.feedback.under[getRandom(0, habitInfo.feedback.under.length)].label)
-                $('#feedback-wrapper').show();
-                listen();
-            break;
-        }
-    }
-}
+//     if (habitInfo.totalRead > 10) {
+//         switch (habitInfo.feedback.feedback) {
+//             case 0:
+//                 // do nothing
+//             break;
+//             case 1:
+//                 console.log("feedback : ", habitInfo.feedback.feedback);
+//                 $('#feedback-text').text("You\'re doing great!")
+//                 $('#feedback-wrapper').show();
+//                 listen();
+//             break;
+//             case 2:
+//                 console.log("feedback : ", habitInfo.feedback.feedback);
+//                 $('#feedback-text').text("You could catch up on")
+//                 $('#category-rec').text(habitInfo.feedback.under[getRandom(0, habitInfo.feedback.under.length)].label)
+//                 $('#feedback-wrapper').show();
+//                 listen();
+//             break;
+//         }
+//     }
+// }
 
 // --------------------------------------------------------------------------------------
 //          RSS FUNCTIONS
@@ -561,9 +602,9 @@ var Chart = function(){
 
   var obj = {};
 
-  // var margin = { top: 20, right: 80, bottom: 30, left: 50 };
-  var width = 300;
-  var height = 200;
+  var margin = { top: 20, right: 20, bottom: 20, left: 20 };
+  var width = 320 - margin.left - margin.right;
+  var height = 230 - margin.top - margin.bottom;
   // var tip = d3.tip()
   //     .attr('class', 'd3-tip')
   //     .offset([-10, 0])
@@ -581,19 +622,19 @@ var Chart = function(){
 
     svg = d3.select("#per-day-chart")
       .append("svg")
-      .attr("width", width)
-      .attr("height", height+10)
+      .attr("width", width + 20)
+      .attr("height", height + 20)
       // .attr("transform", "translate(0," + height + ")")
       ;
 
       chart = svg.append("g")
-      // .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-      .attr("transform", "translate(0, 10)")
+      .attr("transform", 'translate('+ margin.left + ', ' + margin.top + ')')
+      // .attr("transform", "translate(0, 10)")
       ;
 
     chart.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
+      .attr("transform", 'translate( 0, ' + height + ')')
       ;
 
     chart.append("g")
@@ -681,7 +722,7 @@ var Chart = function(){
     var topicEnter = topic.enter()
       .append("g")
       .attr("class", "topic")
-      .attr("transform", "translate(0, 10)")
+      .attr("transform", 'translate('+ margin.left + ', ' + margin.top + ')')
       // .attr("id", function(d){ return d.topic + "line"; })
       ;
 
@@ -692,8 +733,11 @@ var Chart = function(){
       })
       .attr("fill", "none")
       .attr("d", function (d) {
-      return line(d.countPerDay);
-    })
+        if (d3.max(d.countPerDay, function(i){return i.count}) > 0 ) {
+            return line(d.countPerDay);
+        }
+
+      })
       .style("stroke-width", "5")
       .style("stroke", "#00C189")
     //   .on('mouseover', function(d, i){
@@ -737,12 +781,10 @@ var Chart = function(){
       .attr("x", 3)
       .attr("fill", function(d){
         if ( d.max == 0 ){
-            $('#' + d.name).css("color", "#3754A1");
-            $('#' + d.name).css("cursor", "default");
+            $('#' + d.name).addClass("inactive");
         } else {
-            $('#' + d.name).css("color", "white");
+            $('#' + d.name).addClass("active");
         }
-
         return "white"
       })
       .attr("opacity", "0")

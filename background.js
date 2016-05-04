@@ -99,94 +99,94 @@ function getRandom(min, max) {
 //          HABIT FUNCTIONS
 // -------------------------------------------
 
-var feedback = 0;
+// var feedback = 0;
 
-function parseHabits(info, numRead) {           // function to check reading habits, is user good or need to be reminded of topic?
-    console.log("checking habits...");
-    console.log(numRead, " articles read");
+// function parseHabits(info, numRead) {           // function to check reading habits, is user good or need to be reminded of topic?
+//     console.log("checking habits...");
+//     console.log(numRead, " articles read");
 
-    var interval = 10;
+//     var interval = 10;
 
-    if (numRead % interval == 0) {              // check every ten articles
+//     if (numRead % interval == 0) {              // check every ten articles
 
-        var rounded = []
-        var over = []
-        var under = []
+//         var rounded = []
+//         var over = []
+//         var under = []
 
-        for (var category in info['articleInfo']) { // load data into array
-            if (category != "other") {
-                if (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100 >= 7 && ((info['articleInfo'][category]['count'] - 1) / totalRead) * 100 <= 17) {
-                    rounded.push({
-                        label: category,
-                        percentage: (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100)
-                    })
-                } else if (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100 > 17) {
-                    over.push({
-                        label: category,
-                        percentage: (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100)
-                    })
-                } else if (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100 < 7) {
-                    under.push({
-                        label: category,
-                        percentage: (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100)
-                    })
-                }
-            }
-        }
+//         for (var category in info['articleInfo']) { // load data into array
+//             if (category != "other") {
+//                 if (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100 >= 7 && ((info['articleInfo'][category]['count'] - 1) / totalRead) * 100 <= 17) {
+//                     rounded.push({
+//                         label: category,
+//                         percentage: (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100)
+//                     })
+//                 } else if (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100 > 17) {
+//                     over.push({
+//                         label: category,
+//                         percentage: (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100)
+//                     })
+//                 } else if (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100 < 7) {
+//                     under.push({
+//                         label: category,
+//                         percentage: (((info['articleInfo'][category]['count'] - 1) / totalRead) * 100)
+//                     })
+//                 }
+//             }
+//         }
 
-        // console.log("rounded ", rounded)
-        // console.log("over ", over)
-        // console.log("under ", under);
+//         // console.log("rounded ", rounded)
+//         // console.log("over ", over)
+//         // console.log("under ", under);
 
-        if (rounded.length >= 6) {
-            changeIcon("pos");
-            // console.log("you're doing great")
-            feedback = 1;
-        } else if (under.length >= 4) {
-            changeIcon("neg");
-            // console.log("you're missing out on ", under[getRandom(0, under.length)].label);
-            feedback = 2;
+//         if (rounded.length >= 6) {
+//             changeIcon("pos");
+//             // console.log("you're doing great")
+//             feedback = 1;
+//         } else if (under.length >= 4) {
+//             changeIcon("neg");
+//             // console.log("you're missing out on ", under[getRandom(0, under.length)].label);
+//             feedback = 2;
 
-        } else if (over.length >= 3) {
-            changeIcon("normal");
-            // console.log("you are super caught up on ", over[getRandom(0, under.length)].label, "!")
-            // if (under.length > 0) {
-            //     // console.log("Why don't you read some ", under[getRandom(0, under.length)].label, "?");
-            // }
-            feedback = 0;
-        } else {
-            changeIcon("normal");
-            feedback = 0;
-        }
+//         } else if (over.length >= 3) {
+//             changeIcon("normal");
+//             // console.log("you are super caught up on ", over[getRandom(0, under.length)].label, "!")
+//             // if (under.length > 0) {
+//             //     // console.log("Why don't you read some ", under[getRandom(0, under.length)].label, "?");
+//             // }
+//             feedback = 0;
+//         } else {
+//             changeIcon("normal");
+//             feedback = 0;
+//         }
 
-        return { rounded: rounded, over: over, under: under, feedback: feedback }
+//         return { rounded: rounded, over: over, under: under, feedback: feedback }
     
-    } else {
+//     } else {
 
-        changeIcon("normal");
-        feedback = 0;
-        return { rounded: null, over: null, under: null, feedback: feedback }
+//         changeIcon("normal");
+//         feedback = 0;
+//         return { rounded: null, over: null, under: null, feedback: feedback }
     
-    }
-}
+//     }
+// }
 
-function changeIcon(icon) {
-    console.log("changing icon");
+// function changeIcon(icon) {
+//     console.log("changing icon");
 
-    switch (icon) {
-        case "normal":
-            chrome.browserAction.setIcon({ path: "images/icon_38.png" });
-            break;
-        case "neg":
-            chrome.browserAction.setIcon({ path: "images/icon_neg_38.png" });
-            break;
-        case "pos":
-            chrome.browserAction.setIcon({ path: "images/icon_pos_38.png" });
-            break;
-        default:
-            chrome.browserAction.setIcon({ path: "images/icon_38.png" });
-    }
-}
+//     switch (icon) {
+//         case "normal":
+//             chrome.browserAction.setIcon({ path: "images/icon_38.png" });
+//             break;
+//         case "neg":
+//             chrome.browserAction.setIcon({ path: "images/icon_neg_38.png" });
+//             break;
+//         case "pos":
+//             chrome.browserAction.setIcon({ path: "images/icon_pos_38.png" });
+//             break;
+//         default:
+//             chrome.browserAction.setIcon({ path: "images/icon_38.png" });
+//     }
+// }
 
 // -------------------------------------------
 //          STORAGE FUNCTIONS
@@ -277,10 +277,10 @@ function saveData(data, timeSpent) {
             callback(articleRead);
         }
 
-        var habits = parseHabits(info, totalRead);
-        console.log("habit data ", habits);
-        info['habitInfo']['feedback'] = habits;
-        info['habitInfo']['totalRead'] = totalRead;
+        // var habits = parseHabits(info, totalRead);
+        // console.log("habit data ", habits);
+        // info['habitInfo']['feedback'] = habits;
+        // info['habitInfo']['totalRead'] = totalRead;
 
         // ------------------
         //  checking date for line graph
@@ -333,9 +333,8 @@ function initStorage() {
             "world": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 17", count: "1"},
-                // {date : "2016 4 18", count: "3"},
-                // {date : "2016 4 19", count: "4"}
+                {date : "2016 5 1", count: "1"},
+                {date : "2016 5 2", count: "3"},
                 ],
                 read: [],
                 timeSpent: 0
@@ -343,9 +342,8 @@ function initStorage() {
             "usa": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 17", count: "2"},
-                // {date : "2016 4 18", count: "5"},
-                // {date : "2016 4 19", count: "3"}
+                 {date : "2016 5 1", count: "1"},
+                {date : "2016 5 2", count: "2"},
                 ],
                 read: [],
                 timeSpent: 0
@@ -353,9 +351,8 @@ function initStorage() {
             "politics": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 17", count: "0"},
-                // {date : "2016 4 18", count: "1"},
-                // {date : "2016 4 19", count: "0"}
+                 {date : "2016 5 1", count: "2"},
+                {date : "2016 5 2", count: "3"},
                 ],
                 read: [],
                 // keywords: [],
@@ -364,9 +361,8 @@ function initStorage() {
             "business": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 17", count: "2"},
-                // {date : "2016 4 18", count: "1"},
-                // {date : "2016 4 19", count: "0"}
+                {date : "2016 5 1", count: "0"},
+                {date : "2016 5 2", count: "0"},
                 ],
                 read: [],
                 timeSpent: 0
@@ -374,9 +370,8 @@ function initStorage() {
             "tech": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 17", count: "2"},
-                // {date : "2016 4 18", count: "4"},
-                // {date : "2016 4 19", count: "5"}
+                 {date : "2016 5 1", count: "4"},
+                {date : "2016 5 2", count: "1"},
                 ],
                 read: [],
                 timeSpent: 0
@@ -384,9 +379,8 @@ function initStorage() {
             "science": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 17", count: "5"},
-                // {date : "2016 4 18", count: "4"},
-                // {date : "2016 4 19", count: "4"}
+                {date : "2016 5 1", count: "3"},
+                {date : "2016 5 2", count: "2"},
                 ],
                 read: [],
                 timeSpent: 0
@@ -394,9 +388,8 @@ function initStorage() {
             "health": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 17", count: "0"},
-                // {date : "2016 4 18", count: "2"},
-                // {date : "2016 4 19", count: "1"}
+                {date : "2016 5 1", count: "0"},
+                {date : "2016 5 2", count: "0"},
                 ],
                 read: [],
                 timeSpent: 0
@@ -404,9 +397,8 @@ function initStorage() {
             "opinion": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 17", count: "1"},
-                // {date : "2016 4 18", count: "1"},
-                // {date : "2016 4 19", count: "0"}
+                {date : "2016 5 1", count: "2"},
+                {date : "2016 5 2", count: "2"},
                 ],
                 read: [],
                 timeSpent: 0
@@ -414,9 +406,8 @@ function initStorage() {
             "sports": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 17", count: "0"},
-                // {date : "2016 4 18", count: "0"},
-                // {date : "2016 4 19", count: "1"}
+                {date : "2016 5 1", count: "5"},
+                {date : "2016 5 2", count: "6"},
                 ],
                 read: [],
                 timeSpent: 0
@@ -424,9 +415,8 @@ function initStorage() {
             "culture": {
                 count: 1,
                 countPerDay: [
-                // {date : "2016 4 17", count: "3"},
-                // {date : "2016 4 18", count: "0"},
-                // {date : "2016 4 19", count: "2"}
+                {date : "2016 5 1", count: "0"},
+                {date : "2016 5 2", count: "3"},
                 ],
                 read: [],
                 subcategories: {},
@@ -436,9 +426,8 @@ function initStorage() {
             "other": {
                 count: 0,
                 countPerDay: [
-                // {date : "2016 4 17", count: "0"},
-                // {date : "2016 4 18", count: "5"},
-                // {date : "2016 4 19", count: "6"}
+                {date : "2016 5 1", count: "0"},
+                {date : "2016 5 2", count: "0"},
                 ],
                 read: [],
                 subcategories: {},
@@ -448,7 +437,7 @@ function initStorage() {
         },
         habitInfo: {
             totalRead: 0,
-            feedback: {},
+            // feedback: {},
             doShowOnboarding: true
         }
     }
