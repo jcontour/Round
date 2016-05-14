@@ -65,7 +65,7 @@ var currArticleState = false;
 var prevArticleState = false;
 var currTime = 0;
 var prevTime = 0;
-var timeSpent = 0;
+// var timeSpent = 0;
 var currArticleInfo, prevArticleInfo;
 
 function getTime(data, isArticle) {
@@ -80,9 +80,9 @@ function getTime(data, isArticle) {
     currTime = Date.now();
 
     if (prevArticleState) {                     // if previous page was an article, save the info
-        timeSpent = Math.ceil((currTime - prevTime) / 1000); // calculate time spent in seconds
+        // timeSpent = Math.ceil((currTime - prevTime) / 1000); // calculate time spent in seconds
         // console.log("spent ", timeSpent, " seconds on ", prevArticleInfo);
-        saveData(prevArticleInfo, timeSpent);
+        // saveData(prevArticleInfo, timeSpent);
     }
 
     if (currArticleState) {                     // automatically add current article into data, time will be logged on page change
@@ -219,10 +219,10 @@ function saveData(data, timeSpent) {
         console.log("category: ", category);
 
         // check page category against storage categories
-        var categories = ["world", "usa", "politics", "business", "tech", "science", "health", "opinion", "sports", "culture"];
+        var categories = ["world", "usa", "politics", "business", "tech", "science", "health", "opinion", "sports"];
         if (category == "us" || category == "usnews") {
             category = "usa";
-        } else if (category == "books" || category == "tvandmovies" || category == "uknews" || category == "uk" || category == "movies" || category == "music" || category == "arts" || category == "fashion" || category == "style" || category == "lgbt" || category == "community" || category == "food") {
+        } else if (category == "culture" || category == "books" || category == "tvandmovies" || category == "uknews" || category == "uk" || category == "movies" || category == "music" || category == "arts" || category == "fashion" || category == "style" || category == "lgbt" || category == "community" || category == "food") {
 
             // adding subcategories
             if (info['articleInfo']["culture"]["subcategories"].hasOwnProperty(category)) {
@@ -248,34 +248,38 @@ function saveData(data, timeSpent) {
 
             category = "other";
         }
+
+        info['articleInfo'][category]['count']++;
+        totalRead++;
         
-        articleRead(function(read){
-            if (!read) {
+        // articleRead(function(){
+        //     if (!read) {
 
-                console.log("adding to: ", category)
+        //         console.log("adding to: ", category)
                 
-                info['articleInfo'][category]['count']++;
-                info['articleInfo'][category]['read'].push({title: data.headline, url: data.url});
+        //         info['articleInfo'][category]['count']++;
+        //         info['articleInfo'][category]['read'].push({title: data.headline, url: data.url});
                 
-                totalRead++;
-            } else { 
+        //         totalRead++;
+        //     } else { 
 
-                console.log("adding ", timeSpent, " to log");
-                info['articleInfo'][category]['timeSpent'] += timeSpent;
-            }
-        })
+        //         // console.log("adding ", timeSpent, " to log");
+        //         info['articleInfo'][category]['timeSpent'] += timeSpent;
+        //     }
+        // })
 
-        function articleRead(callback) {
-            var articleRead;
-            for (var i = 0; i < info['articleInfo'][category]['read'].length; i++) {
-                if (info['articleInfo'][category]['read'][i]['title'] == data.headline) {
-                    articleRead = true;
-                } else {
-                    articleRead = false;
-                }
-            }
-            callback(articleRead);
-        }
+        // function articleRead(callback) {
+        //     var articleRead;
+        //     for (var i = 0; i < info['articleInfo'][category]['read'].length; i++) {
+        //         if (info['articleInfo'][category]['read'][i]['title'] == data.headline) {
+        //             articleRead = true;
+        //             break;
+        //         } else {
+        //             articleRead = false;
+        //         }
+        //     }
+        //     callback(articleRead);
+        // }
 
         // var habits = parseHabits(info, totalRead);
         // console.log("habit data ", habits);
@@ -333,105 +337,105 @@ function initStorage() {
             "world": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 5 1", count: "1"},
-                {date : "2016 5 2", count: "3"},
-                ],
-                read: [],
-                timeSpent: 0
+                // {date : "2016 5 1", count: "1"},
+                // {date : "2016 5 2", count: "3"},
+                ]
+                // read: [],
+                // timeSpent: 0
             },
             "usa": {
                 count: 1,
                 countPerDay: [
-                 {date : "2016 5 1", count: "1"},
-                {date : "2016 5 2", count: "2"},
-                ],
-                read: [],
-                timeSpent: 0
+                 // {date : "2016 5 1", count: "1"},
+                // {date : "2016 5 2", count: "2"},
+                ]
+                // read: [],
+                // timeSpent: 0
             },
             "politics": {
                 count: 1,
                 countPerDay: [
-                 {date : "2016 5 1", count: "2"},
-                {date : "2016 5 2", count: "3"},
-                ],
-                read: [],
+                 // {date : "2016 5 1", count: "2"},
+                // {date : "2016 5 2", count: "3"},
+                ]
+                // read: [],
                 // keywords: [],
-                timeSpent: 0
+                // timeSpent: 0
             },
             "business": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 5 1", count: "0"},
-                {date : "2016 5 2", count: "0"},
-                ],
-                read: [],
-                timeSpent: 0
+                // {date : "2016 5 1", count: "0"},
+                // {date : "2016 5 2", count: "0"},
+                ]
+                // read: [],
+                // timeSpent: 0
             },
             "tech": {
                 count: 1,
                 countPerDay: [
-                 {date : "2016 5 1", count: "4"},
-                {date : "2016 5 2", count: "1"},
-                ],
-                read: [],
-                timeSpent: 0
+                 // {date : "2016 5 1", count: "4"},
+                // {date : "2016 5 2", count: "1"},
+                ]
+                // read: [],
+                // timeSpent: 0
             },
             "science": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 5 1", count: "3"},
-                {date : "2016 5 2", count: "2"},
-                ],
-                read: [],
-                timeSpent: 0
+                // {date : "2016 5 1", count: "3"},
+                // {date : "2016 5 2", count: "2"},
+                ]
+                // read: [],
+                // timeSpent: 0
             },
             "health": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 5 1", count: "0"},
-                {date : "2016 5 2", count: "0"},
-                ],
-                read: [],
-                timeSpent: 0
+                // {date : "2016 5 1", count: "0"},
+                // {date : "2016 5 2", count: "0"},
+                ]
+                // read: [],
+                // timeSpent: 0
             },
             "opinion": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 5 1", count: "2"},
-                {date : "2016 5 2", count: "2"},
-                ],
-                read: [],
-                timeSpent: 0
+                // {date : "2016 5 1", count: "2"},
+                // {date : "2016 5 2", count: "2"},
+                ]
+                // read: [],
+                // timeSpent: 0
             },
             "sports": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 5 1", count: "5"},
-                {date : "2016 5 2", count: "6"},
-                ],
-                read: [],
-                timeSpent: 0
+                // {date : "2016 5 1", count: "5"},
+                // {date : "2016 5 2", count: "6"},
+                ]
+                // read: [],
+                // timeSpent: 0
             },
             "culture": {
                 count: 1,
                 countPerDay: [
-                {date : "2016 5 1", count: "0"},
-                {date : "2016 5 2", count: "3"},
+                // {date : "2016 5 1", count: "0"},
+                // {date : "2016 5 2", count: "3"},
                 ],
-                read: [],
+                // read: [],
                 subcategories: {},
-                timeSpent: 0,
+                // timeSpent: 0,
                 subcategories: {}
             },
             "other": {
                 count: 0,
                 countPerDay: [
-                {date : "2016 5 1", count: "0"},
-                {date : "2016 5 2", count: "0"},
+                // {date : "2016 5 1", count: "0"},
+                // {date : "2016 5 2", count: "0"},
                 ],
-                read: [],
+                // read: [],
                 subcategories: {},
-                timeSpent: 0,
+                // timeSpent: 0,
                 subcategories: {}
             }
         },

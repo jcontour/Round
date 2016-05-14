@@ -195,16 +195,19 @@ function listen(){      //  event listeners
 
     $('.filter').off('click').on('click', function(){
         console.log(this.id);
+        $('.selected').removeClass('selected');
         if ($(this).hasClass("active")){
             $('.line').hide();
+            $(this).addClass('selected');
             $('#' + this.id + "-line").show();
-            showArticlesRead(this.id);
+            // showArticlesRead(this.id);
         }
     })
 
     $('#all').off('click').on('click', function(){
         $('.line').show();
-        $('#articles-read-container').hide();
+        $('.selected').removeClass('selected');
+        // $('#articles-read-container').hide();
     })
 
     $('.filter').on('mouseenter', function(){
@@ -245,7 +248,7 @@ function listen(){      //  event listeners
         if ($('#' + whichFilter).hasClass("active")){
             $('.line').hide();
             $('#' + this.id).show();
-            showArticlesRead(whichFilter);
+            // showArticlesRead(whichFilter);
         }
     })
 
@@ -279,7 +282,7 @@ function showProfile(show, data){
             $('#profile').hide();
             $('#chart').show();
             $('#go-help').show();
-            $('#articles-read-container').hide();
+            // $('#articles-read-container').hide();
             $('.line').show();
             $('#go-profile').show().attr("src", "img/profile.png");
             listen();
@@ -308,18 +311,17 @@ function showHelp(show){
     }
 }
 
-function showArticlesRead(category){
-    $('#articles-read-container').html('');
+// function showArticlesRead(category){
+//     $('#articles-read-container').html('');
 
-    $('#articles-read-container').append('<h1>Articles read in ' + category + '</h1>');
-    for (var i =0; i < articleInfo[category]['read'].length; i++){
+//     for (var i =0; i < articleInfo[category]['read'].length; i++){
         
-        $('#articles-read-container').append('<div class="article-read" id=' + articleInfo[category]['read'][i].url + '>' + articleInfo[category]['read'][i].title + '</div>');
-    }
-
-    $('#articles-read-container').show()
-    listen();
-}
+//         $('#articles-read-container').prepend('<div class="article-read" id=' + articleInfo[category]['read'][i].url + '>' + articleInfo[category]['read'][i].title + '</div>');
+//     }
+//     $('#articles-read-container').prepend('<h1>Articles read in ' + category + '</h1>');
+//     $('#articles-read-container').show()
+//     listen();
+// }
 
 // --------------------------------------------------------------------------------------
 //         FEEDBACK STUFF
@@ -571,6 +573,11 @@ function initPieChart(pieData) {
         })
       .style("fill", "White")
       .text(function(d) { return d.data.label; })
+      .style('text-transform', "uppercase")
+      .style("font-size", "8pt")
+      .style("font-family", "Roboto")
+      .style("letter-spacing", "2px")
+      .style("pointer-events", "none")
       ;
 
     arcs.on('mouseover', function(){
@@ -602,16 +609,9 @@ var Chart = function(){
 
   var obj = {};
 
-  var margin = { top: 20, right: 20, bottom: 20, left: 20 };
+  var margin = { top: 10, right: 10, bottom: 20, left: 20 };
   var width = 320 - margin.left - margin.right;
-  var height = 230 - margin.top - margin.bottom;
-  // var tip = d3.tip()
-  //     .attr('class', 'd3-tip')
-  //     .offset([-10, 0])
-  //     .html(function(d) {
-  //         return d.topic;
-  //     })
-  //     ;                 
+  var height = 220 - margin.top - margin.bottom;                
   var svg, chart;
   var xScale, yScale;
   var xAxis, yAxis;
@@ -622,8 +622,8 @@ var Chart = function(){
 
     svg = d3.select("#per-day-chart")
       .append("svg")
-      .attr("width", width + 20)
-      .attr("height", height + 20)
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
       // .attr("transform", "translate(0," + height + ")")
       ;
 
@@ -634,11 +634,14 @@ var Chart = function(){
 
     chart.append("g")
       .attr("class", "x axis")
-      .attr("transform", 'translate( 0, ' + height + ')')
+      .attr("transform", 'translate( 0, ' + (height + 10) + ')')
+      // .style("font-size", "2px")
       ;
 
     chart.append("g")
         .attr("class", "y axis")
+        .attr("transform", 'translate( -5, 0)')
+        // .style("font-size", "2px")
         // .attr("transform", "rotate(-90)")
         // .attr("y", 6)
         // .attr("dy", ".71em")
@@ -678,18 +681,28 @@ var Chart = function(){
     xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom")
-      .ticks(5)
+      // .ticks(function(d){
+      //   return (d.date.getMonth() + d.date.getDay())
+      // })
+      // .ticks(5)
       .tickSize(-height, 0, 0)
-      .tickFormat("")
+      .tickFormat(formatDate)
       // .style("stroke-dasharray", ("3, 3"))
       ;
+
+    function formatDate(d) {
+        var monthNameFormat = d3.time.format("%B");
+        var dayNameFormat = d3.time.format("%d");
+        var date = monthNameFormat(d) + " " + dayNameFormat(d);
+        return date;
+    }
 
     yAxis = d3.svg.axis()
       .scale(y)
       .orient("left")
       .ticks(5)
       .tickSize(-width, 0, 0)
-      .tickFormat("")
+      // .tickFormat("")
       // .style("stroke-dasharray", ("3, 3")) 
       ;
 

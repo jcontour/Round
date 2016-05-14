@@ -30,24 +30,24 @@ function getMeta(url){
                 chrome.runtime.sendMessage({directive: "metadata", isArticle: false});
             }
         break;
-        case "well.blogs.nytimes.com":
-            console.log("nyt");
+        // case "well.blogs.nytimes.com":
+        //     console.log("nyt");
 
-            var path = a.pathname;
-            var splitpath = path.split("/");
-            splitpath.shift();
-            // checking if first value in array is a four digit number (specific to how nytimes formats article urls)
-            if ( !isNaN(splitpath[0]) && splitpath[0].length == 5) {
-                // console.log(a.pathname);
-                console.log("requesting nyt metadata");
-                nyt(function(metadata){
-                    console.log(metadata);
-                    chrome.runtime.sendMessage({directive: "metadata", metadata: metadata, isArticle: true});
-                })
-            } else {
-                chrome.runtime.sendMessage({directive: "metadata", isArticle: false});
-            }
-        break
+        //     var path = a.pathname;
+        //     var splitpath = path.split("/");
+        //     splitpath.shift();
+        //     // checking if first value in array is a four digit number (specific to how nytimes formats article urls)
+        //     if ( !isNaN(splitpath[0]) && splitpath[0].length == 5) {
+        //         // console.log(a.pathname);
+        //         console.log("requesting nyt metadata");
+        //         nyt(function(metadata){
+        //             console.log(metadata);
+        //             chrome.runtime.sendMessage({directive: "metadata", metadata: metadata, isArticle: true});
+        //         })
+        //     } else {
+        //         chrome.runtime.sendMessage({directive: "metadata", isArticle: false});
+        //     }
+        // break
         case "www.buzzfeed.com":
             console.log("buzzfeed");
 
