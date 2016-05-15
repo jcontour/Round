@@ -20,10 +20,12 @@ function getData(res) {
     chrome.storage.sync.get("data", function (result) {
         var parsed = JSON.parse( result.data );
 
+        console.log(parsed);
+
         articleInfo = parsed.articleInfo;
         var habitInfo = parsed.habitInfo;
 
-        console.log("article info ", articleInfo)
+        // console.log("article info ", articleInfo)
         // console.log("habitinfo ", habitInfo);
 
     if (habitInfo.doShowOnboarding == true) {
@@ -84,22 +86,24 @@ function getData(res) {
     });
 }
 
-function isZero(value, index, ar){      // checking count values
-    console.log(value.label, " ", value.count);
-    if (value.label != "other" && value.count == 1){
-        return true;
-    } else if (value.label == "other" && value.count == 0) {
-        return true;
-    } else if (value.label == "other" && value.count > 0) {
-        return false;
-    } else {
-        return false;
-    }
-}
+// function isZero(value, index, ar){      // checking count values
+//     console.log(value.label, " ", value.count);
+//     if (value.label != "other" && value.count == 1){
+//         return true;
+//     } else if (value.label == "other" && value.count == 0) {
+//         return true;
+//     } else if (value.label == "other" && value.count > 0) {
+//         return false;
+//     } else {
+//         return false;
+//     }
+// }
 
 // --------------------------------------------------------------------------------------
 //          ONBOARDING STUFF
 // --------------------------------------------------------------------------------------
+
+var slide = 1;
 
 function onboarding(){          // init onboarding
 
@@ -138,16 +142,12 @@ function slideChange(slide){    // change onboarding slides on click
     }
 }
 
-
 // --------------------------------------------------------------------------------------
 //          LISTENERS
 // --------------------------------------------------------------------------------------
 
-var slide = 1;
 var profile = false;
 var help = false;
-
-
 
 function listen(){      //  event listeners
 
@@ -169,6 +169,7 @@ function listen(){      //  event listeners
     $('#close-rss').off('click').on('click', function(){     // close rss box
         $('#rss').empty();
         $('#rss').hide();
+        $('#close-rss').hide();
     });
 
     $('#go-profile').off('click').on('click', function(){
@@ -185,13 +186,15 @@ function listen(){      //  event listeners
 
     $('#back').off('click').on('click', function(){
         $('#back').hide()
+        subcategory = false;
+        $('#go-help').show();
         initPieChart(pieData);
     })
 
-    $('#ok').off('click').on('click', function(){     // close rss box
-        $('#feedback-wrapper').hide();
-        chrome.runtime.sendMessage({directive: "reset-icon"});
-    });
+    // $('#ok').off('click').on('click', function(){     // close rss box
+    //     $('#feedback-wrapper').hide();
+    //     chrome.runtime.sendMessage({directive: "reset-icon"});
+    // });
 
     $('.filter').off('click').on('click', function(){
         console.log(this.id);
@@ -252,10 +255,10 @@ function listen(){      //  event listeners
         }
     })
 
-    $('.article-read').off('click').on('click', function(){   // on article click, open new tab with link
-        console.log("clicked link: ", $(this).attr('id'))
-        chrome.tabs.create({url: $(this).attr('id')});
-    });
+    // $('.article-read').off('click').on('click', function(){   // on article click, open new tab with link
+    //     console.log("clicked link: ", $(this).attr('id'))
+    //     chrome.tabs.create({url: $(this).attr('id')});
+    // });
 
     $('#rssNYT').off('click').on('click', function(){
         getRSS("nyt", rssCategory);
@@ -365,9 +368,11 @@ function showHelp(show){
 
 function showRSS(category){
     rssCategory = category;
+    $('#rss').empty();
+    $('#rss').html('<div id="which-rss-container"><p>FIND ' + category + ' ARTICLES FROM...</p><div class="whichRSS" id="rssNYT">New York Times</div><div class="whichRSS" id="rssBF">Buzzfeed</div></div>')
     $('#rss').show();
-    $('#rss').html('<div id="close-rss"></div>')
-    $('#which-rss-container').show();
+    $('#close-rss').show();
+    // $('#which-rss-container').show();
     listen();
 }
 
@@ -375,9 +380,10 @@ var rssCategory;
 
 function getRSS(site, category){
     // $('#rssNYT').hide();
-    $('#which-rss-container').hide();
+    // $('#which-rss-container').hide();
     $('#rss').empty();
-    $('#rss').html('<div id="close-rss"></div>')
+    $('#rss').html('<div id="rss-title">Recently published articles in ' + category + '</div>')
+
 
     if (site == "bf") {
         switch (category) {             // convert call to site specific rss categories
@@ -498,9 +504,17 @@ function callRSS (call) {
 //          PIE CHART
 // --------------------------------------------------------------------------------------
 
+var subcategory = false;
+
 function initPieChart(pieData) {
 
     $('#chart').html('');
+
+    if (subcategory){
+        $('#subcategory').show();
+    } else {
+        $('#subcategory').hide();
+    }
 
     // var dataSet = pieData;
 
@@ -550,16 +564,32 @@ function initPieChart(pieData) {
         if (d.data.label == "culture" && d.data.count > 1){
             $('#rss').hide();
             $('#back').show();
+            $('#go-help').hide();
+            $('#close-rss').hide();
+            subcategory = true;
             initPieChart(cultureData);
+            $('#subcategory').html('SUBCATEGORIES IN CULTURE');
             listen();
         } else if (d.data.label == "other") {
             $('#rss').hide();
             $('#back').show();
+            $('#go-help').hide();
+            $('#close-rss').hide();
+            subcategory = true;
             initPieChart(otherData);
+            $('#subcategory').html('SUBCATEGORIES IN OTHER');
             listen();
         } else {
             showRSS(d.data.label); 
         }
+      })
+      .on('mouseover', function(){
+        if (!subcategory){
+            $(this).attr("fill", "#00E09F");
+        }
+      })
+      .on('mouseout', function(){
+        $(this).attr("fill", "#00C189");
       })
       ;
 
@@ -581,12 +611,17 @@ function initPieChart(pieData) {
       ;
 
     arcs.on('mouseover', function(){
-        d3.select(this)
-          .select("text")
-          .style("fill", "black")
-          .attr("stroke", "black");
+        // $(this).attr("fill", "red");
+        if (!subcategory){
+            d3.select(this)
+              .select("text")
+              .style("fill", "black")
+              .attr("stroke", "black");
+        }
       })
       .on('mouseout', function(){
+        // $(this).attr("fill", "#00C189");
+
         d3.select(this)
           .select("text")
           .style("fill", "white")
@@ -684,7 +719,7 @@ var Chart = function(){
       // .ticks(function(d){
       //   return (d.date.getMonth() + d.date.getDay())
       // })
-      // .ticks(5)
+      .ticks(2)
       .tickSize(-height, 0, 0)
       .tickFormat(formatDate)
       // .style("stroke-dasharray", ("3, 3"))

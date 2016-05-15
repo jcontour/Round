@@ -118,18 +118,18 @@ html body {
 	position: relative;
 }
 
-#which-rss-container{
+#which-rss-container {
 	position: absolute;
-	width: calc(100% - 60px);
-	height: 150px;
-	top: 339px;
+	width: calc(100% - 40px);
+	height: calc(100% - 65px);
 	padding: 20px;
-	text-align: center;
-	display: none;
+	top: 25px;
+	left: 0px;
 }
 
-#which-rss-container p{
+#which-rss-container p {
 	letter-spacing: 2px;
+	text-transform: uppercase;
 }
 
 .whichRSS {
@@ -137,11 +137,8 @@ html body {
 	color: #E3594B;
 	font-weight: 700;
 	text-align: center;
-	width: 75px;
-	position: relative;
-	display: inline-block;
-	margin: 0px;
-	height: 40px;
+	margin-bottom: 10px;
+	height: 15px;
 	padding: 10px;
 	cursor: pointer;
 }
@@ -150,27 +147,28 @@ html body {
 	color: white;
 }
 
-#rssNYT {
-	/*left: 50px;*/
-}
-
-#rssBF {
-	padding-top: 15px;
-	height: 35px;
-	/*position: relative;*/
-	/*top: -9px;*/
+#rss-title {
+	width: 100%;
+	text-align: center;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	font-size: .8em;
+	margin-top: 7px;
+	margin-bottom: 2px;
+	color: #0C152E;
 }
 
 #close-rss{
 	position: absolute;
-	top: -25px;
-	right: 0px;
+	top: 313px;
+	right: 11px;
 	width: 20px;
 	height: 20px;
-	background-color: white;
-	/*background-image: url("../img/close.png");*/
+	background-image: url("../img/close.png");
 	background-size: cover;
 	cursor: pointer;
+	display: none;
 }
 
 #close-rss:hover{
@@ -180,8 +178,7 @@ html body {
 .rss-wrapper {
 	display: inline-block;
 	width: calc(100% - 8px);
-/*	margin: 2px;
-*/	padding: 2px;
+	padding: 2px;
 	cursor: pointer;
 }
 
@@ -364,6 +361,17 @@ e
 .tick text {
 	fill: white;
 	font-size: 8px;
+}
+
+#subcategory{
+	font-size: 8pt;
+	margin: 0;
+	letter-spacing: 2px;
+	display: inline-block;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	width: 80px;
 }
 
 /*-----------------------------------*/
