@@ -110,6 +110,8 @@ function onboarding(){          // init onboarding
     $('#chart').append(" <div id='onboarding'> </div> <div id='onboard-text'></div> <div id='slide-up'> \> \> \> </div>")
     $('#onboarding').css("background-image", "url(img/onboarding01.png)");
     $('#onboarding').css("background-size", "80%");
+    $('#onboarding').css("margin-top", "20px");
+    $('#onboard-text').css("top", "-35px");
     $('#onboard-text').html('<p>The news that you consume makes up your view of the world</p><p>Round helps you see the full picture</p>');
     listen();
 }
@@ -126,17 +128,23 @@ function slideChange(slide){    // change onboarding slides on click
             $('#onboarding').css("background-size", "contain");
             $('#slide-up').text("\> \>")
             $('#onboarding').css("background-image", "url(img/onboarding02.png)");
+            $('#onboard-text').css("top", "-2px");
             $('#onboard-text').html('<p>Round works in the background, taking notes when you read the news.</p>');
             break;
         case 3:
-            $('#onboarding').css("background-position", "50% 50%"); 
+            $('#onboarding').css("background-position", "50% 30%"); 
             $('#onboarding').css("background-image", "url(img/onboarding04.png)");
+            $('#onboarding').css("background-size", "60%");
+            $('#onboarding').css("margin-top", "0px");
             $('#slide-up').text("\>")
+            $('#onboard-text').css("top", "-15px");
             $('#onboard-text').html('<p>The popup displays your reading habits, and highlights the areas you might have missed.</p> <p>If you need some help catching up, click on the slice for the latest articles.</p>');
             break;
         case 4: 
+            $('#onboarding').css("background-size", "contain");
             $('#onboarding').css("background-image", "url(img/onboarding05.png)");
-            $('#slide-up').text("Help me out here!").css("font-style", "italic");
+            $('#slide-up').text("Help me out here!")//.css("font-style", "italic");
+            $('#onboard-text').css("top", "-3px");
             $('#onboard-text').html('<p>Let\'s get started!</p> <p>Read articles as you would normally, or start with some suggestions.</p>');
             break;
     }
